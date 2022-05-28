@@ -3,6 +3,7 @@
       xmlns:layout="http://www.w3.org/1999/xhtml">
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +16,10 @@
     <body>
       <div class="header fixed-top">
         <header class="container-fluid">
-          <img src="../static/img/tweeter.svg" alt="logo">
+          <a href="/index.html">
+            <img class="d-none d-lg-block" src="../static/img/tweeter.svg" alt="logo">
+            <img class="d-block d-lg-none" src="../static/img/tweeter-small.svg" alt="logo">
+          </a>
           <ul class="nav justify-content-center">
               <li class="nav-item">
                 <a class="nav-link active noto" href="#">Home</a>
@@ -27,11 +31,32 @@
                 <a class="nav-link noto" href="#">Bookmarks</a>
               </li>
           </ul>
-  
+
           <div class="d-flex">
+            <div class="d-none d-lg-block"></div>
               <img src="../static/img/avatar.jpg" alt="" width="32" height="36" style="margin-top: 5px;">
-              <span class="user-avatar d-inline-flex flex-column justify-content-center poppins-600"
-                    th:text="${#authentication.name}"></span>
+              <div class="dropdown user-avatar d-inline-flex flex-column justify-content-center">
+                <a class="dropdown-toggle poppins-600" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span th:text="${#authentication.name}"></span>
+                </a>
+              
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <li>
+                    <a class="dropdown-item d-flex" href="#">
+                      <img src="../static/img/profile.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
+                      <span>My profile</span>
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <a class="logout d-flex dropdown-item">
+                      <img src="../static/img/logout.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
+                      <span>Log out</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              
           </div>
       </header>
       </div>
@@ -39,35 +64,51 @@
       <div id="panorama"></div>
 
         <main>
-            <div class="container profile-info d-flex">
-                <div class="profile-image-container">
-                  <div class="profile-image">
-                    <img src="../static/img/avatar.jpg" alt="" width="152px" height="152px">
-                  </div>
-                </div>
-
-                <div class="d-flex flex-column followers-info" style="width: 100%; margin-top: 20px">
-                  <div class="d-flex justify-content-between">
-                    <div class="d-flex justify-content-between" style="width: 40%;">
-                      <h5 class="poppins-600" th:text="${user.name}"></h5>
-
-                      <p class="poppins-500 gray" th:text="${following}">Following</p>
-                      <p class="poppins-500 gray"th:text="${followers}">Followers</p>
-                    </div>
-  
-                    <button th:action="@{/follow}" method="get" class="follow-btn">
-                      <div>
-                        <img src="../static/img/follow.svg" alt="" width="48px" height="48px">
-                        <!-- <div style="width: 16px; height: 16px; background: url(/img/follow.svg); background-size: cover; display: inline-block;"></div> -->
-                        <span>Follow</span>
-                      </div>
-                    </button>
-                  </div>
-                  <div style="width: 40%;">
-                    <span th:text="${user.description}"></span>
-                  </div>
-                </div>
+          <div class="container position-relative">
+            <div class="white-bg half-panel"></div>
+            <div class="profile-image-container d-none d-flex-1000 justify-content-center">
+              <div class="profile-image">
+                <img src="../static/img/avatar.jpg" alt="">
+              </div>
             </div>
+          </div>
+          <div class="container profile-info d-flex">
+              <div class="profile-image-container d-none-1000">
+                <div class="profile-image">
+                  <img src="../static/img/avatar.jpg" alt="">
+                </div>
+              </div>
+
+              <div class="d-flex flex-column followers-info">
+                <div class="d-flex justify-content-between followers-info-container">
+                  <div class="d-flex justify-content-around followers-info-container" style="width: 60%;">
+                    <h5 class="poppins-600" th:text="${user.name}"></h5>
+
+                    <div class="d-flex justify-content-around follower-counters">
+                      <p class="poppins-500 gray light"><span class="dark" th:text="${following}"></span> Following</p>
+                      <p class="poppins-500 gray light"><span class="dark" th:text="${followers}"></span> Followers</p>
+                    </div>
+                  </div>
+
+                  <button class="follow-btn follow-btn-lg">
+                    <div>
+                      <img src="../static/img/follow.svg" alt="" width="48px" height="48px">
+                      <span>Follow</span>
+                    </div>
+                  </button>
+                </div>
+                <div class="profile-desc">
+                  <span class="light" th:text="${user.description}"></span>
+                </div>
+
+                <button class="d-none follow-btn follow-btn-sm">
+                  <div>
+                    <img src="../static/img/follow.svg" alt="" width="48px" height="48px">
+                    <span>Follow</span>
+                  </div>
+                </button>
+              </div>
+          </div>
 
             <div class="container posts d-flex">
               <div class="d-flex side-nav">
