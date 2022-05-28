@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/layout_form}"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="../static/css/header.css">
+        <link rel="stylesheet" href="../static/css/styles.css">
+    </head>
+
+    <body>
+      <div class="header fixed-top">
+        <header class="container-fluid">
+          <img src="../static/img/tweeter.svg" alt="logo">
+          <ul class="nav justify-content-center">
+              <li class="nav-item">
+                <a class="nav-link active noto" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link noto" href="#">Explore</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link noto" href="#">Bookmarks</a>
+              </li>
+          </ul>
+  
+          <div class="d-flex">
+              <img src="../static/img/avatar.jpg" alt="" width="32" height="36" style="margin-top: 5px;">
+              <span class="user-avatar d-inline-flex flex-column justify-content-center poppins-600"
+                    th:text="${#authentication.name}"></span>
+          </div>
+      </header>
+      </div>
+      <!-- Panorama -->
+      <div id="panorama"></div>
+
+        <main>
+            <div class="container profile-info d-flex">
+                <div class="profile-image-container">
+                  <div class="profile-image">
+                    <img src="../static/img/avatar.jpg" alt="" width="152px" height="152px">
+                  </div>
+                </div>
+
+                <div class="d-flex flex-column followers-info" style="width: 100%; margin-top: 20px">
+                  <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between" style="width: 40%;">
+                      <h5 class="poppins-600" th:text="${user.name}"></h5>
+
+                      <p class="poppins-500 gray" th:text="${following}">Following</p>
+                      <p class="poppins-500 gray"th:text="${followers}">Followers</p>
+                    </div>
+  
+                    <button th:action="@{/follow}" method="get" class="follow-btn">
+                      <div>
+                        <img src="../static/img/follow.svg" alt="" width="48px" height="48px">
+                        <!-- <div style="width: 16px; height: 16px; background: url(/img/follow.svg); background-size: cover; display: inline-block;"></div> -->
+                        <span>Follow</span>
+                      </div>
+                    </button>
+                  </div>
+                  <div style="width: 40%;">
+                    <span th:text="${user.description}"></span>
+                  </div>
+                </div>
+            </div>
+
+            <div class="container posts d-flex">
+              <div class="d-flex side-nav">
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Tweets</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Tweets&replies</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Media</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{/likes}">Likes</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="d-flex flex-column posts-container">
+                <div class="post" th:each="post : ${posts}">
+                  <div class="post-container">
+                    <div class="post-author d-flex">
+                      <div class="post-autor-avatar">
+                        <img src="../static/img/avatar.jpg" alt="" width="40px" height="40px">
+                      </div>
+                      <div class="d-flex flex-column">
+                        <h6 class="poppins-500" th:text="${post.user}"></h6>
+                        <span class="small-text light-gray" th:text="${post.createdTime}"></span>
+                      </div>
+                    </div>
+
+                    <div class="post-description">
+                      <span class="noto" th:text="${post.content}"></span>
+                    </div>
+
+                    <div class="post-thumbnail">
+                      <img src="../static/img/unsplash_E2HgkL3LaFE.png" alt="">
+                    </div>
+
+                    <div class="post-rate d-flex justify-content-end">
+                      <span>449 Comments</span>
+                      <span>59k Retweets</span>
+                      <span>234 Saved</span>
+                    </div>
+
+                    <div class="post-buttons d-flex justify-content-around">
+                      <button class="post-button comment-btn">
+                        <img src="../static/img/comment.svg" alt="" width="20px" height="20px">
+                        <span>Comment</span>
+                      </button>
+                      <button class="post-button retweet-btn active">
+                        <img src="../static/img/refresh.svg" alt="" width="32px" height="32px">
+                        <span>Retweeted</span>
+                      </button>
+                      <button class="post-button like-btn  active">
+                        <img src="../static/img/like.svg" alt="" width="32px" height="32px">
+                        <span>Liked</span>
+                      </button>
+                      <button class="post-button save-btn  active">
+                        <img src="../static/img/bookmark.svg" alt="" width="25px" height="25px">
+                        <span>Saved</span>
+                      </button>
+                    </div>
+
+                    <div class="post-reply d-flex">
+                      <div class="replyer-avatar">
+                        <img src="../static/img/avatar.jpg" alt="" width="40px" height="45px">
+                      </div>
+                      <input type="text" placeholder="Tweet your reply">
+                    </div>
+                    
+                    <hr>
+
+                    <div class="post-comment d-flex">
+                      <div class="post-comment-avatar d-flex flex-column justify-content-start">
+                        <img src="../static/img/avatar.jpg" alt="" width="45px" height="45px">
+                      </div>
+                      <div class="d-flex flex-column" style="width:100%;" th:each="comment : ${comments}">
+                        <div class="post-comment-body">
+                          <div class="post-comment-body-container d-flex flex-column">
+                            <div class="post-comment-author d-flex">
+                              <h6 th:text="${comment.user}"></h6>
+                              <span class="small-text light-gray" th:text="${comment.localdatetime}"></span>
+                            </div>
+                            <div class="post-comment-content" >
+                              <p th:text="${comment.content}"></p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="post-comment-rate d-flex justify-content-start">
+                          <button class="d-flex">
+                            <img src="../static/img/like.svg" alt="" width="22.57px" height="22.57px">
+                            <span>Like</span>
+                          </button>
+                          <span class="post-comment-likes-counter" th:text="${comment.likes().size}">Likes</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </main>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    </body>
+</html>

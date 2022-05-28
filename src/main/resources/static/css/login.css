@@ -1,0 +1,9 @@
+input[placeholder] {
+  user-select: none;
+  border-radius: 5px;
+}
+
+.min-vh-90 {
+  min-height: 90vh !important;
+}
+/*# sourceMappingURL=login.css.map */

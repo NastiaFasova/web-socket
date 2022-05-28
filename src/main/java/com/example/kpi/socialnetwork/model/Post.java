@@ -1,0 +1,31 @@
+package com.example.kpi.socialnetwork.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
+
+@Entity
+@Data
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name="posts")
+public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String image;
+    private String content;
+    private LocalDateTime createdTime;
+    @ManyToOne
+    private User user;
+}

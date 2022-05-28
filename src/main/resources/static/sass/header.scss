@@ -1,0 +1,56 @@
+button{
+    user-select: none;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header{
+    background-color: #ffffff;
+    height: 68px;
+
+    .nav-link.active{
+        border: none;
+        border-bottom: #2F80ED solid 3px;
+        border-radius: 4px;
+    }
+}
+
+.container-fluid {
+    margin: 19px 72px;
+    width: auto;
+    padding: 0;
+}
+
+.nav{
+    margin-top: 3px;
+}
+
+.container, .container-fluid{
+    padding: 0px;
+}
+
+.user-avatar{
+    margin-left: 11px;
+}
+
+body{
+    background: #F2F2F2;
+}
+
+.noto{
+    font-family: 'Noto Sans', sans-serif;
+    font-weight: 400;
+}
+
+.poppins-500{
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+}
+
+.poppins-600{
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
