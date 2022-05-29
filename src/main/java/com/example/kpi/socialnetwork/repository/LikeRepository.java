@@ -10,7 +10,4 @@ import java.util.List;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like,Long> {
-    List<Like> findAllByPost(Post post);
-
-    Like findByUserAndPost(User user, Post post);
 }

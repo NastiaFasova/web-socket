@@ -27,7 +27,7 @@ public class PostController {
     @PostMapping("/post")
     public String addPost(Post post) throws NullPointerException {
         User user = userService.getLoggedInUser();
-        postService.savePost(user, post.getContent());
+        postService.savePost(user.getEmail(), post);
         return "posts";
     }
 
