@@ -9,16 +9,16 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/css/header.css">
-        <link rel="stylesheet" href="/css/styles.css">
+        <link rel="stylesheet" href="../static/css/header.css">
+        <link rel="stylesheet" href="../static/css/styles.css">
     </head>
 
     <body>
       <div class="header fixed-top">
         <header class="container-fluid">
           <a href="/index.html">
-            <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
-            <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
+            <img class="d-none d-lg-block" src="../static/img/tweeter.svg" alt="logo">
+            <img class="d-block d-lg-none" src="../static/img/tweeter-small.svg" alt="logo">
           </a>
           <ul class="nav justify-content-center">
               <li class="nav-item">
@@ -34,7 +34,7 @@
 
           <div class="d-flex">
             <div class="d-none d-lg-block"></div>
-              <img src="/img/avatar.jpg" alt="" width="32" height="36" style="margin-top: 5px;">
+              <img src="../static/img/avatar.jpg" alt="" width="32" height="36" style="margin-top: 5px;">
               <div class="dropdown user-avatar d-inline-flex flex-column justify-content-center">
                 <a class="dropdown-toggle poppins-600" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                   <span th:text="${#authentication.name}"></span>
@@ -43,14 +43,14 @@
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                   <li>
                     <a class="dropdown-item d-flex" href="#">
-                      <img src="/img/profile.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
+                      <img src="../static/img/profile.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
                       <span>My profile</span>
                     </a>
                   </li>
                   <li><hr class="dropdown-divider"></li>
                   <li>
                     <a class="logout d-flex dropdown-item">
-                      <img src="/img/logout.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
+                      <img src="../static/img/logout.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
                       <span>Log out</span>
                     </a>
                   </li>
@@ -68,14 +68,14 @@
             <div class="white-bg half-panel"></div>
             <div class="profile-image-container d-none d-flex-1000 justify-content-center">
               <div class="profile-image">
-                <img src="/img/avatar.jpg" alt="">
+                <img src="../static/img/avatar.jpg" alt="">
               </div>
             </div>
           </div>
           <div class="container profile-info d-flex">
               <div class="profile-image-container d-none-1000">
                 <div class="profile-image">
-                  <img src="/img/avatar.jpg" alt="">
+                  <img src="../static/img/avatar.jpg" alt="">
                 </div>
               </div>
 
@@ -92,7 +92,7 @@
 
                   <button class="follow-btn follow-btn-lg">
                     <div>
-                      <img src="/img/follow.svg" alt="" width="48px" height="48px">
+                      <img src="../static/img/follow.svg" alt="" width="48px" height="48px">
                       <span>Follow</span>
                     </div>
                   </button>
@@ -103,7 +103,7 @@
 
                 <button class="d-none follow-btn follow-btn-sm">
                   <div>
-                    <img src="/img/follow.svg" alt="" width="48px" height="48px">
+                    <img src="../static/img/follow.svg" alt="" width="48px" height="48px">
                     <span>Follow</span>
                   </div>
                 </button>
@@ -146,7 +146,7 @@
                     </div>
 
                     <div class="post-thumbnail">
-                      <img src="/img/unsplash_E2HgkL3LaFE.png" alt="">
+                      <img src="../static/img/unsplash_E2HgkL3LaFE.png" alt="">
                     </div>
 
                     <div class="post-rate d-flex justify-content-end">
@@ -157,26 +157,26 @@
 
                     <div class="post-buttons d-flex justify-content-around">
                       <button class="post-button comment-btn">
-                        <img src="/img/comment.svg" alt="" width="20px" height="20px">
+                        <img src="../static/img/comment.svg" alt="" width="20px" height="20px">
                         <span th:text="${post.getComments().size()}">Comment</span>
                       </button>
                       <button class="post-button retweet-btn active">
-                        <img src="/img/refresh.svg" alt="" width="32px" height="32px">
+                        <img src="../static/img/refresh.svg" alt="" width="32px" height="32px">
                         <span>Retweeted</span>
                       </button>
                       <button class="post-button like-btn  active">
-                        <img src="/img/like.svg" alt="" width="32px" height="32px">
+                        <img src="../static/img/like.svg" alt="" width="32px" height="32px">
                         <span th:text="${post.getLikes().size()}">Liked</span>
                       </button>
                       <button class="post-button save-btn  active">
-                        <img src="/img/bookmark.svg" alt="" width="25px" height="25px">
+                        <img src="../static/img/bookmark.svg" alt="" width="25px" height="25px">
                         <span>Saved</span>
                       </button>
                     </div>
 
                     <div class="post-reply d-flex">
                       <div class="replyer-avatar">
-                        <img src="/img/avatar.jpg" alt="" width="40px" height="45px">
+                        <img src="../static/img/avatar.jpg" alt="" width="40px" height="45px">
                       </div>
                       <input type="text" placeholder="Tweet your reply">
                     </div>
@@ -185,7 +185,7 @@
 
                     <div class="post-comment d-flex">
                       <div class="post-comment-avatar d-flex flex-column justify-content-start">
-                        <img src="/img/avatar.jpg" alt="" width="45px" height="45px">
+                        <img src="../static/img/avatar.jpg" alt="" width="45px" height="45px">
                       </div>
                       <div class="d-flex flex-column" style="width:100%;" th:each="comment : ${post.getComments()}">
                         <div class="post-comment-body">
@@ -202,7 +202,7 @@
                         </div>
                         <div class="post-comment-rate d-flex justify-content-start">
                           <button class="d-flex">
-                            <img src="/img/like.svg" alt="" width="22.57px" height="22.57px">
+                            <img src="../static/img/like.svg" alt="" width="22.57px" height="22.57px">
                             <span>Like</span>
                           </button>
                           <span class="post-comment-likes-counter" th:text="${comment.getLikes().size}">Likes</span>

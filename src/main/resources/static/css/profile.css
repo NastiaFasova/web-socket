@@ -1,0 +1,151 @@
+.posts {
+  margin-top: 96px !important;
+}
+
+.side-nav {
+  margin: 0px 0px 0px 24px;
+  width: 25%;
+}
+
+.gray2 {
+  color: #4F4F4F;
+}
+
+.posts-container {
+  width: 75%;
+}
+
+.trends hr {
+  margin-top: 8px;
+}
+
+.trends .tag {
+  color: #333333;
+  font-family: 'Noto Sans';
+  font-weight: 500;
+  font-size: 16px;
+  margin-top: 24px;
+}
+
+.trends .tag-tweets {
+  font-family: 'Noto Sans';
+  font-weight: 500;
+  color: #828282;
+  margin-bottom: 8px;
+}
+
+.who-to-follow, .trends {
+  padding: 11px 20px 40px 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.who-to-follow {
+  margin-top: 22px;
+}
+
+.who-to-follow hr {
+  margin: 8px 0px 20px 0px;
+}
+
+.side-nav {
+  background-color: transparent;
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+.follow-btn {
+  padding: 4px 12px 4px 9px;
+  margin: 0px;
+  height: 30px;
+}
+
+.follow-btn div img {
+  margin-top: 5px;
+}
+
+.follow-user-name {
+  color: #000000;
+  font-family: 'Poppins';
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.user-followers {
+  font-family: 'Noto Sans';
+  font-size: 12px;
+  color: #828282;
+}
+
+.follow-desc {
+  color: #828282;
+  font-family: 'Noto Sans';
+  font-size: 14px;
+  margin-top: 19.2px;
+  margin-bottom: 20px;
+}
+
+.follow-user-bg {
+  width: 100%;
+  height: 154px;
+  background-image: url(../img/panorama.png);
+  background-size: contain;
+  border-radius: 8px;
+}
+
+.follow-user hr {
+  margin: 20px 0px;
+}
+
+.tweet-smth {
+  font-family: 'Poppins';
+  font-weight: 600;
+  font-size: 12px;
+  color: #4F4F4F;
+}
+
+.my-tweet {
+  background-color: #ffffff;
+  margin-bottom: 24px;
+  padding: 11px 20px 15px 11px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+}
+
+.my-tweet hr {
+  margin: 8px 0px;
+}
+
+.my-tweet textarea {
+  margin-left: 10px;
+  resize: none;
+}
+
+.my-tweet textarea::placeholder {
+  color: #BDBDBD;
+}
+
+.my-tweet .tweet-btn {
+  color: #FFFFFF;
+  font-family: 'Noto Sans';
+  font-weight: 500;
+  font-size: 12px;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  background: #2F80ED;
+  padding: 8px 24px;
+  margin-top: 5px;
+}
+
+@media (max-width: 1010px) {
+  .side-nav {
+    display: none !important;
+  }
+  .posts-container {
+    width: 100%;
+  }
+}
+/*# sourceMappingURL=profile.css.map */
