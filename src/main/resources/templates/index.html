@@ -16,7 +16,7 @@
     <body>
       <div class="header fixed-top">
         <header class="container-fluid">
-          <a th:href="{/}">
+          <a th:href="@{/}">
             <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
             <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
           </a>
@@ -49,7 +49,7 @@
                   </li>
                   <li><hr class="dropdown-divider"></li>
                   <li>
-                    <a class="logout d-flex dropdown-item">
+                    <a class="logout d-flex dropdown-item" th:href="@{/logout}">
                       <img src="/img/logout.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
                       <span>Log out</span>
                     </a>
@@ -61,8 +61,8 @@
       </header>
       </div>
       <!-- Panorama -->
-      <div id="panorama"></div>
-
+      <div id="panorama" th:style="'background-image:url(' + ${user.photosImagePath} + ');'"></div>
+<!--      <img th:src="@{${user.photosImagePath}}" />-->
         <main>
           <div class="container position-relative">
             <div class="white-bg half-panel"></div>

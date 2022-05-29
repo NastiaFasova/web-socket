@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.List;
 
 @Entity
@@ -32,4 +33,11 @@ public class User {
     private String description;
     @OneToMany
     private List<Post> posts;
+
+    @Transient
+    public String getPhotosImagePath() {
+        if (image == null || id == null) return null;
+
+        return "/user-photos/" + id + "/" + image;
+    }
 }

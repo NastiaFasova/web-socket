@@ -31,15 +31,15 @@
                           <h3 class="login-heading mb-4 justify-content-center d-flex poppins-600">Welcome!</h3>
             
                           <!-- Sign In Form -->
-                          <form th:action="@{/register}" method="post" th:object="${formData}">
+                          <form th:action="@{/register}" method="post" th:object="${formData}" enctype="multipart/form-data">
                             <div class="form-floating mb-3">
                               <input type="text" name = "userName" class="form-control" id="floatingInput"
-                                     th:field="*{name}" placeholder="John">
+                                     th:field="*{fullName}" placeholder="John">
                               <label for="floatingInput" class="poppins-600">Your Name</label>
                             </div>
                             <div class="form-floating mb-3">
                               <input type="email" name = "login" class="form-control" id="floatingEmail"
-                                     th:field="*{surname}" placeholder="name@example.com">
+                                     th:field="*{email}" placeholder="name@example.com">
                               <label for="floatingEmail" class="poppins-600" >Email address</label>
                             </div>
                             <div class="form-floating mb-3">
@@ -47,6 +47,10 @@
                                      th:field="*{password}" placeholder="Password">
                               <label for="floatingPassword"  class="poppins-600">Password</label>
                             </div>
+
+                              <div class="form-floating mb-3">
+                              <input type="file" name="fileImage" accept="image/png, image/jpeg" />
+                              </div>
 
                             <div class="d-grid">
                               <button class="btn btn-lg btn-primary btn-login text-uppercase fw-bold mb-2 poppins-600" type="submit">Sign up</button>
