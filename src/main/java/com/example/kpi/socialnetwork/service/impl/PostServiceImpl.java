@@ -22,17 +22,23 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post savePost(User user, String content) {
-        Post post = new Post();
-        User userByEmail = userRepository.findByEmail(user.getEmail());
-        post.setUser(userByEmail);
-        post.setContent(content);
-        return postRepository.save(post);
+    public Post savePost(String email, Post post) {
+        User userByEmail = userRepository.findByEmail(email);
+        Post newPost = Post.builder()
+                .content(post.getContent())
+                .image(post.getImage())
+                .createdTime(post.getCreatedTime())
+                .build();
+        postRepository.save(newPost);
+        userByEmail.getPosts().add(newPost);
+        userRepository.save(userByEmail);
+        return post;
     }
 
     @Override
     public List<Post> getPostsOfUser(Long userId) {
-        return postRepository.findByUserOrderById(userRepository.findById(userId).orElseThrow());
+        User user = userRepository.findById(userId).orElseThrow();
+        return user.getPosts();
     }
 
     @Override

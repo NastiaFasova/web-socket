@@ -3,12 +3,16 @@ package com.example.kpi.socialnetwork.security;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
+@Primary
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserService userService;
 
@@ -24,6 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user != null) {
             userBuilder = org.springframework.security.core.userdetails.User.withUsername(login);
             userBuilder.password(user.getPassword());
+            userBuilder.authorities(new ArrayList<>());
             return userBuilder.build();
         }
         throw new UsernameNotFoundException("User is not found.");

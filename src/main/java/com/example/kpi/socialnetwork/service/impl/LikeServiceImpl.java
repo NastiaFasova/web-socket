@@ -1,8 +1,10 @@
 package com.example.kpi.socialnetwork.service.impl;
 
+import com.example.kpi.socialnetwork.model.Comment;
 import com.example.kpi.socialnetwork.model.Like;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
+import com.example.kpi.socialnetwork.repository.CommentRepository;
 import com.example.kpi.socialnetwork.repository.LikeRepository;
 import com.example.kpi.socialnetwork.repository.PostRepository;
 import com.example.kpi.socialnetwork.repository.UserRepository;
@@ -15,34 +17,69 @@ public class LikeServiceImpl implements LikeService {
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
     public LikeServiceImpl(PostRepository postRepository, LikeRepository likeRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
     public int getAllLikesForPost(Long postId) {
         Post post = this.postRepository.findById(postId).orElse(null);
-        return likeRepository.findAllByPost(post).size();
+        if (post != null) {
+            return post.getLikes().size();
+        }
+        throw new RuntimeException();
     }
 
     @Override
-    public boolean addLike(Long postId, Long loggedInUserId) {
-        Post post = this.postRepository.findById(postId).orElse(null);
-        User user = this.userRepository.findById(loggedInUserId).orElse(null);
+    public Like addLike(Long postId, Long loggedInUserId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        User user = userRepository.findById(loggedInUserId).orElse(null);
+        if (post != null) {
+            Like likeByUserAndPost = post.getLikes().stream()
+                    .filter(l -> l.getUser().equals(user))
+                    .findAny()
+                    .orElse(null);
 
-        Like likeByUserAndPost = this.likeRepository.findByUserAndPost(user, post);
-
-        if (likeByUserAndPost == null) {
-            Like like = new Like();
-            like.setUser(user);
-            like.setPost(post);
-            like.setCount(1L);
+            if (likeByUserAndPost == null) {
+                Like like = new Like();
+                like.setUser(user);
+                post.getLikes().add(like);
+                likeRepository.save(like);
+                postRepository.save(post);
+                return like;
+            }
+            return likeByUserAndPost;
         }
-        return likeRepository.save(likeByUserAndPost) != null;
+        throw new RuntimeException();
+    }
+
+    @Override
+    public Like addLikeToComment(Long postId, Long loggedInUserId) {
+        Comment comment = commentRepository.findById(postId).orElse(null);
+        User user = userRepository.findById(loggedInUserId).orElse(null);
+        if (comment != null) {
+            Like likeByUserAndPost = comment.getLikes().stream()
+                    .filter(l -> l.getUser().equals(user))
+                    .findAny()
+                    .orElse(null);
+
+            if (likeByUserAndPost == null) {
+                Like like = new Like();
+                like.setUser(user);
+                comment.getLikes().add(like);
+                likeRepository.save(like);
+                commentRepository.save(comment);
+                return like;
+            }
+            return likeByUserAndPost;
+        }
+        throw new RuntimeException();
     }
 }

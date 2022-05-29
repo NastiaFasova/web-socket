@@ -17,8 +17,8 @@
 <body class="d-flex flex-column min-vh-100">
     <div class="header fixed-top">
         <header class="container-fluid">
-            <img class="d-none d-lg-block" src="../static/img/tweeter.svg" alt="logo">
-            <img class="d-block d-lg-none" src="../static/img/tweeter-small.svg" alt="logo">
+            <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
+            <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
         </header>
     </div>
     <section class="d-flex flex-column justify-content-center min-vh-90">
@@ -33,16 +33,18 @@
                           <!-- Sign In Form -->
                           <form th:action="@{/login}" method="post" th:object="${user}">
                             <div class="form-floating mb-3">
-                              <input type="email" name = "login" class="form-control" id="floatingInput" placeholder="name@example.com">
-                              <label for="floatingInput poppins-600" th:field="*{email}">Email address</label>
+                              <input type="email" name = "email" class="form-control" id="floatingInput"
+                                     th:field="*{email}" placeholder="name@example.com">
+                              <label for="floatingInput poppins-600" >Email address</label>
                             </div>
                             <div class="form-floating mb-3">
-                              <input type="password" class="form-control" name="password" id="floatingPassword" placeholder="Password">
-                              <label for="floatingPassword poppins-600" th:field="*{password}">Password</label>
+                              <input type="password" class="form-control" name="password" id="floatingPassword"
+                                     th:field="*{password}" placeholder="Password">
+                              <label for="floatingPassword poppins-600" >Password</label>
                             </div>
             
                             <div class="form-check mb-3">
-                              <input class="form-check-input" type="checkbox" value="" id="rememberPasswordCheck">
+                              <input class="form-check-input" type="checkbox" name="remember-me" value="" id="rememberPasswordCheck">
                               <label class="form-check-label poppins-500" for="rememberPasswordCheck">
                                 Remember Me
                               </label>

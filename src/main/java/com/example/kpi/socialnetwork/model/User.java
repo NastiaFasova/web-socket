@@ -25,10 +25,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String surname;
+    private String fullName;
     private String email;
     private String password;
     private String image;
     private String description;
+    @OneToMany
+    private List<Post> posts;
 }

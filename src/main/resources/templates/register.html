@@ -11,14 +11,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/header.css">
-    <link rel="stylesheet" href="../static/css/login.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/login.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
     <div class="header fixed-top">
         <header class="container-fluid">
-            <img class="d-none d-lg-block" src="../static/img/tweeter.svg" alt="logo">
-            <img class="d-block d-lg-none" src="../static/img/tweeter-small.svg" alt="logo">
+            <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
+            <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
         </header>
     </div>
     <section class="d-flex flex-column justify-content-center min-vh-90">
@@ -31,21 +31,22 @@
                           <h3 class="login-heading mb-4 justify-content-center d-flex poppins-600">Welcome!</h3>
             
                           <!-- Sign In Form -->
-                          <form th:action="@{/register}" method="post" th:object="${user}">
+                          <form th:action="@{/register}" method="post" th:object="${formData}">
                             <div class="form-floating mb-3">
-                              <input type="text" name = "userName" class="form-control" id="floatingInput" placeholder="John">
-                              <label for="floatingInput" class="poppins-600" th:field="*{name}">Your Name</label>
+                              <input type="text" name = "userName" class="form-control" id="floatingInput"
+                                     th:field="*{name}" placeholder="John">
+                              <label for="floatingInput" class="poppins-600">Your Name</label>
                             </div>
                             <div class="form-floating mb-3">
-                              <input type="email" name = "login" class="form-control" id="floatingEmail" placeholder="name@example.com">
-                              <label for="floatingEmail" class="poppins-600" th:field="*{surname}">Email address</label>
+                              <input type="email" name = "login" class="form-control" id="floatingEmail"
+                                     th:field="*{surname}" placeholder="name@example.com">
+                              <label for="floatingEmail" class="poppins-600" >Email address</label>
                             </div>
                             <div class="form-floating mb-3">
-                              <input type="password" class="form-control" name="password" id="floatingPassword" placeholder="Password">
-                              <label for="floatingPassword"  class="poppins-600" th:field="*{password}">Password</label>
+                              <input type="password" class="form-control" name="password" id="floatingPassword"
+                                     th:field="*{password}" placeholder="Password">
+                              <label for="floatingPassword"  class="poppins-600">Password</label>
                             </div>
-
-                              <input type="file" name="image" accept="image/png, image/jpeg" />
 
                             <div class="d-grid">
                               <button class="btn btn-lg btn-primary btn-login text-uppercase fw-bold mb-2 poppins-600" type="submit">Sign up</button>
