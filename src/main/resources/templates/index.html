@@ -16,7 +16,7 @@
     <body>
       <div class="header fixed-top">
         <header class="container-fluid">
-          <a href="/index.html">
+          <a th:href="{/}">
             <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
             <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
           </a>
@@ -150,7 +150,7 @@
                     </div>
 
                     <div class="post-rate d-flex justify-content-end">
-                      <span>449 Comments</span>
+                      <span th:text="${post.getComments().size()}">449 Comments</span>
                       <span>59k Retweets</span>
                       <span>234 Saved</span>
                     </div>
@@ -166,7 +166,7 @@
                       </button>
                       <button class="post-button like-btn  active">
                         <img src="/img/like.svg" alt="" width="32px" height="32px">
-                        <span th:text="${post.getLikes().size()}">Liked</span>
+                        <span th:href="@{/like/post/{id}(id=${post.id})}" th:text="${post.getLikes().size()}">Liked</span>
                       </button>
                       <button class="post-button save-btn  active">
                         <img src="/img/bookmark.svg" alt="" width="25px" height="25px">
@@ -201,9 +201,9 @@
                           </div>
                         </div>
                         <div class="post-comment-rate d-flex justify-content-start">
-                          <button class="d-flex">
+                          <button class="d-flex" >
                             <img src="/img/like.svg" alt="" width="22.57px" height="22.57px">
-                            <span>Like</span>
+                            <span th:href="@{/like/comment/{id}(id=${post.id})}">Like</span>
                           </button>
                           <span class="post-comment-likes-counter" th:text="${comment.getLikes().size}">Likes</span>
                         </div>

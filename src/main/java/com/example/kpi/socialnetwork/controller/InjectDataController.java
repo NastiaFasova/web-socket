@@ -58,6 +58,6 @@ public class InjectDataController {
                 .build();
         commentService.createComment(comment, 1L);
 
-        likeService.addLike(1L, 1L);
+        likeService.addLikeToPost(1L, 1L);
     }
 }

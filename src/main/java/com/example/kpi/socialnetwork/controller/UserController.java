@@ -1,5 +1,6 @@
 package com.example.kpi.socialnetwork.controller;
 
+import com.example.kpi.socialnetwork.model.Like;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.service.PostService;

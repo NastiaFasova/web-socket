@@ -29,16 +29,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public int getAllLikesForPost(Long postId) {
-        Post post = this.postRepository.findById(postId).orElse(null);
-        if (post != null) {
-            return post.getLikes().size();
-        }
-        throw new RuntimeException();
-    }
-
-    @Override
-    public Like addLike(Long postId, Long loggedInUserId) {
+    public Like addLikeToPost(Long postId, Long loggedInUserId) {
         Post post = postRepository.findById(postId).orElse(null);
         User user = userRepository.findById(loggedInUserId).orElse(null);
         if (post != null) {
