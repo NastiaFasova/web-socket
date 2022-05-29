@@ -35,6 +35,10 @@ public class RegisterController {
         if (bindingResult != null && bindingResult.hasErrors()) {
             return "register";
         }
+        if (multipartFile.getOriginalFilename() == null || multipartFile.getOriginalFilename().isEmpty()) {
+            registerService.register(user);
+            return "redirect:/login";
+        }
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
         user.setImage(fileName);
         User registeredUser = registerService.register(user);
