@@ -39,10 +39,12 @@ public class PostController {
         return "my_posts";
     }
 
-    @GetMapping("/")
+    @GetMapping("/posts")
     public String getAllPosts(Model model){
         List<Post> posts = postService.getAllPosts();
+        List<User> authors = userService.getAuthors(posts);
         model.addAttribute("posts", posts);
+        model.addAttribute("authors", authors);
         return "posts";
     }
 

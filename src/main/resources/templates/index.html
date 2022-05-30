@@ -22,13 +22,13 @@
           </a>
           <ul class="nav justify-content-center">
               <li class="nav-item">
-                <a class="nav-link active noto" href="#">Home</a>
+                <a class="nav-link active noto" th:href="@{/me}">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link noto" href="#">Explore</a>
+                <a class="nav-link noto" th:href="@{/posts}">Explore</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link noto" href="#">Bookmarks</a>
+                <a class="nav-link noto" th:href="@{/saves}">Bookmarks</a>
               </li>
           </ul>
 
@@ -42,7 +42,7 @@
               
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                   <li>
-                    <a class="dropdown-item d-flex" href="#">
+                    <a class="dropdown-item d-flex" th:href="@{/me}">
                       <img src="/img/profile.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
                       <span>My profile</span>
                     </a>
@@ -84,12 +84,12 @@
                     <h5 class="poppins-600" th:text="${user.fullName}"></h5>
 
                     <div class="d-flex justify-content-around follower-counters">
-                      <p class="poppins-500 gray light"><span class="dark" ></span> Following</p>
-                      <p class="poppins-500 gray light"><span class="dark" ></span> Followers</p>
+                      <p class="poppins-500 gray light" th:text="${followings.size()}"><span class="dark"></span> Following</p>
+                      <p class="poppins-500 gray light" th:text="${followers.size()}"><span class="dark"></span> Followers</p>
                     </div>
                   </div>
 
-                  <button class="follow-btn follow-btn-lg">
+                  <button class="follow-btn follow-btn-lg" th:href="@{/follow/{id}(id=${user.id})}">
                     <div>
                       <img src="/img/follow.svg" alt="" width="48px" height="48px">
                       <span>Follow</span>
