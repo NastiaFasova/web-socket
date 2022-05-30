@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,6 +28,7 @@ public class User {
     private String fullName;
     private String email;
     private String password;
+    private String confirmPassword;
     private String image;
     private String description;
     @OneToMany
@@ -36,8 +36,9 @@ public class User {
 
     @Transient
     public String getPhotosImagePath() {
-        if (image == null || id == null) return null;
-
+        if (image == null || id == null) {
+            return null;
+        }
         return "/user-photos/" + id + "/" + image;
     }
 }

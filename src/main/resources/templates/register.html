@@ -49,13 +49,23 @@
                             </div>
 
                               <div class="form-floating mb-3">
+                                  <input type="password" class="form-control" name="password" id="floatingPassword"
+                                         th:field="*{confirmPassword}" placeholder="Password">
+                                  <label for="floatingPassword"  class="poppins-600">Confirm Password</label>
+                              </div>
+
+                              <div class="form-floating mb-3">
                               <input type="file" name="fileImage" accept="image/png, image/jpeg" />
+                              </div>
+
+                              <div class="form-control-user alert alert-danger"
+                                   th:if="${errorMessage}" th:text="${errorMessage}">
                               </div>
 
                             <div class="d-grid">
                               <button class="btn btn-lg btn-primary btn-login text-uppercase fw-bold mb-2 poppins-600" type="submit">Sign up</button>
                               <div class="text-center d-flex flex-column">
-                                <span>Already have account? - <a class="small poppins-500" th:href="@{/login.html}">Sign in</a></span>
+                                <span>Already have account? - <a class="small poppins-500" th:href="@{/login}">Sign in</a></span>
                               </div>
                             </div>
                           </form>

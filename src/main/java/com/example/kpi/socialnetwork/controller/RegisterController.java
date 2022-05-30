@@ -1,7 +1,10 @@
 package com.example.kpi.socialnetwork.controller;
 
 import com.example.kpi.socialnetwork.model.User;
+import com.example.kpi.socialnetwork.model.dto.UserRegisterDto;
+import com.example.kpi.socialnetwork.model.mapper.UserRegisterMapper;
 import com.example.kpi.socialnetwork.service.RegistrationService;
+import com.example.kpi.socialnetwork.service.UserService;
 import com.example.kpi.socialnetwork.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,26 +25,46 @@ import java.io.IOException;
 @RequestMapping("/register")
 public class RegisterController {
     private final RegistrationService registerService;
+    private final UserService userService;
+    private final UserRegisterMapper userRegisterMapper;
 
     @Autowired
-    public RegisterController(RegistrationService registerService) {
+    public RegisterController(RegistrationService registerService, UserService userService,
+                              UserRegisterMapper userRegisterMapper) {
         this.registerService = registerService;
+        this.userService = userService;
+        this.userRegisterMapper = userRegisterMapper;
     }
 
     @PostMapping
-    public String register(@ModelAttribute("formData") User user,
-                           BindingResult bindingResult, @RequestParam("fileImage") MultipartFile multipartFile)
+    public String register(@ModelAttribute("formData") UserRegisterDto userRegisterDto,
+                           @RequestParam("fileImage") MultipartFile multipartFile, Model model,
+                           BindingResult bindingResult)
             throws IOException {
         if (bindingResult != null && bindingResult.hasErrors()) {
+            model.addAttribute("errorMessage", bindingResult);
+            model.addAttribute("user", new User());
             return "register";
         }
+        if (userService.getByEmail(userRegisterDto.getEmail()) != null) {
+            model.addAttribute("errorMessage", "You must have already registered");
+            model.addAttribute("user", new User());
+            return "register";
+        }
+
+        if (!userRegisterDto.getPassword().equals(userRegisterDto.getConfirmPassword())) {
+            model.addAttribute("errorMessage", "Passwords don`t match");
+            model.addAttribute("user", new User());
+            return "register";
+        }
+
         if (multipartFile.getOriginalFilename() == null || multipartFile.getOriginalFilename().isEmpty()) {
-            registerService.register(user);
+            registerService.register(userRegisterMapper.getUser(userRegisterDto));
             return "redirect:/login";
         }
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        user.setImage(fileName);
-        User registeredUser = registerService.register(user);
+        userRegisterDto.setImage(fileName);
+        User registeredUser = registerService.register(userRegisterMapper.getUser(userRegisterDto));
         String uploadDir = "user-photos/" + registeredUser.getId();
         FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
         return "redirect:/login";
@@ -49,7 +72,7 @@ public class RegisterController {
 
     @GetMapping
     public String showNewRegisterForm(Model model) {
-        User user = new User();
+        UserRegisterDto user = new UserRegisterDto();
         model.addAttribute("formData", user);
         return "register";
     }
