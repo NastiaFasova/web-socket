@@ -4,6 +4,8 @@ import com.example.kpi.socialnetwork.model.Friendship;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.model.dto.UserRegisterDto;
+import com.example.kpi.socialnetwork.model.dto.UserUpdateDto;
+import com.example.kpi.socialnetwork.model.mapper.UserUpdateMapper;
 import com.example.kpi.socialnetwork.service.FriendshipService;
 import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.UserService;
@@ -28,13 +30,15 @@ public class UserController {
     private final UserService userService;
     private final PostService postService;
     private final FriendshipService friendshipService;
+    private final UserUpdateMapper userUpdateMapper;
 
     @Autowired
     public UserController(UserService userService, PostService postService,
-                          FriendshipService friendshipService) {
+                          FriendshipService friendshipService, UserUpdateMapper userUpdateMapper) {
         this.userService = userService;
         this.postService = postService;
         this.friendshipService = friendshipService;
+        this.userUpdateMapper = userUpdateMapper;
     }
 
     @GetMapping("/me")
@@ -65,9 +69,28 @@ public class UserController {
     }
 
     @GetMapping("/edit")
-    public String editProfile(Model model) {
-        User user = userService.getLoggedInUser();
+    public String editProfileForm(Model model) {
+        UserUpdateDto user = userUpdateMapper.getUserUpdateDto(userService.getLoggedInUser());
         model.addAttribute("formData", user);
         return "update";
+    }
+
+    @PostMapping("/edit")
+    public String editProfile(@Valid @ModelAttribute("formData") UserUpdateDto userUpdateDto,
+                              BindingResult bindingResult,
+                              @RequestParam("fileImage") MultipartFile avatar) throws IOException {
+        if (bindingResult != null && bindingResult.hasErrors()) {
+            return "redirect:/edit";
+        }
+        if (avatar.getOriginalFilename() == null || avatar.getOriginalFilename().isEmpty()) {
+            userService.save(userUpdateMapper.getUser(userUpdateDto));
+            return "redirect:/me";
+        }
+        String fileName = StringUtils.cleanPath(avatar.getOriginalFilename());
+        userUpdateDto.setAvatar(fileName);
+        User registeredUser = userService.save(userUpdateMapper.getUser(userUpdateDto));
+        String uploadDir = "user-photos/avatar/" + registeredUser.getId();
+        FileUploadUtil.saveFile(uploadDir, fileName, avatar);
+        return "redirect:/me";
     }
 }

@@ -31,7 +31,7 @@
                             <h3 class="login-heading mb-4 justify-content-center d-flex poppins-600">Account Info</h3>
 
                             <!-- Sign In Form -->
-                            <form th:action="@{/register}" method="post" th:object="${formData}" enctype="multipart/form-data">
+                            <form th:action="@{/edit}" method="post" th:object="${formData}" enctype="multipart/form-data">
                                 <div class="form-floating mb-3">
                                     <input type="hidden" th:field="*{id}"/>
                                     <input type="text" name = "userName" class="form-control" id="floatingInput"
@@ -41,22 +41,15 @@
                                           class="form-control form-control-user alert alert-danger" style="margin-top: 25px"></span>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="email" name = "login" class="form-control" id="floatingEmail"
-                                           th:field="*{email}" placeholder="name@example.com">
-                                    <label for="floatingEmail" class="poppins-600" >Email address</label>
-                                    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
-                                          class="form-control form-control-user alert alert-danger" style="margin-top: 25px"></span>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input type="email" name = "login" class="form-control"
+                                    <input name = "login" class="form-control"
                                            th:field="*{phone}">
                                     <label for="floatingEmail" class="poppins-600" >Phone number</label>
                                     <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"
                                           class="form-control form-control-user alert alert-danger" style="margin-top: 25px"></span>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="email" name = "login" class="form-control" id="floatingEmail"
-                                           th:field="*{address}" placeholder="name@example.com">
+                                    <input name = "login" class="form-control" id="floatingEmail"
+                                           th:field="*{address}">
                                     <label for="floatingEmail" class="poppins-600" >Address</label>
                                     <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
                                           class="form-control form-control-user alert alert-danger" style="margin-top: 25px"></span>

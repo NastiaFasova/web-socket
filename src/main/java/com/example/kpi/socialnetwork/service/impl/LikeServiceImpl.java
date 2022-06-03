@@ -12,6 +12,8 @@ import com.example.kpi.socialnetwork.service.LikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
+
 @Service
 public class LikeServiceImpl implements LikeService {
     private final PostRepository postRepository;
@@ -46,6 +48,16 @@ public class LikeServiceImpl implements LikeService {
                 postRepository.save(post);
                 return like;
             }
+            Iterator<Like> i = post.getLikes().iterator();
+            while (i.hasNext()) {
+                Like like = i.next();
+                if (like.equals(likeByUserAndPost)) {
+                    i.remove();
+                    break;
+                }
+            }
+            likeRepository.delete(likeByUserAndPost);
+            postRepository.save(post);
             return likeByUserAndPost;
         }
         throw new RuntimeException();
