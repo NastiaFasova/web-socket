@@ -8,6 +8,9 @@ import com.example.kpi.socialnetwork.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
 @Service
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
@@ -21,9 +24,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment createComment(Comment comment, Long postId) {
-        commentRepository.save(comment);
+        Comment savedComment = Comment.builder()
+                .username(comment.getUsername())
+                .localDateTime(LocalDateTime.now())
+                .content(comment.getContent())
+                .likes(new ArrayList<>()).build();
+        commentRepository.save(savedComment);
         Post post = postRepository.findByIdFetchComments(postId).orElseThrow();
-        post.getComments().add(comment);
+        post.getComments().add(savedComment);
         postRepository.save(post);
         return comment;
     }

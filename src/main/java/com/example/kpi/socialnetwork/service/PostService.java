@@ -10,4 +10,10 @@ public interface PostService {
     List<Post> getPostsOfUser(Long userId);
 
     List<Post> getAllPosts();
+
+    Post findById(Long postId);
+
+    List<Post> getSavedPostsOfUser(String email);
+
+    List<Post> getLikedPostsOfUser(String email);
 }

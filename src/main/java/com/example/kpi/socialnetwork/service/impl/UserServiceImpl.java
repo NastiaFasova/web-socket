@@ -2,6 +2,7 @@ package com.example.kpi.socialnetwork.service.impl;
 
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
+import com.example.kpi.socialnetwork.repository.PostRepository;
 import com.example.kpi.socialnetwork.repository.UserRepository;
 import com.example.kpi.socialnetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,12 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PostRepository postRepository) {
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     @Override
@@ -56,5 +59,24 @@ public class UserServiceImpl implements UserService {
             }
         }
         return authors;
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public User savePost(User user, Long postId) {
+        Post originalPost = postRepository.getById(postId);
+        user.getSaved().add(originalPost);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User retweetPost(User user, Long postId) {
+        Post originalPost = postRepository.getById(postId);
+        user.getPosts().add(originalPost);
+        return userRepository.save(user);
     }
 }

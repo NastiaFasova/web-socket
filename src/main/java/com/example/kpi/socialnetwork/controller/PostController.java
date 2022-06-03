@@ -2,12 +2,14 @@ package com.example.kpi.socialnetwork.controller;
 
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
+import com.example.kpi.socialnetwork.model.dto.UserRegisterDto;
 import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -24,19 +26,24 @@ public class PostController {
         this.userService = userService;
     }
 
-    @PostMapping("/post")
-    public String addPost(Post post) throws NullPointerException {
+    @PostMapping("/tweet")
+    public String addPost(@ModelAttribute("tweet") Post post) throws NullPointerException {
         User user = userService.getLoggedInUser();
         postService.savePost(user.getEmail(), post);
-        return "posts";
+        return "redirect:/me";
     }
 
-    @GetMapping("/my-posts")
-    public String myPosts(Model model) throws NullPointerException {
+    @GetMapping("/saved")
+    public String mySaved(Model model) throws NullPointerException {
         User user = userService.getLoggedInUser();
-        List<Post> posts = postService.getPostsOfUser(user.getId());
+        List<Post> posts = postService.getSavedPostsOfUser(user.getEmail());
+        List<User> authors = userService.getAuthors(posts);
         model.addAttribute("posts", posts);
-        return "my_posts";
+        model.addAttribute("authors", authors);
+        model.addAttribute("user", userService.getLoggedInUser());
+        model.addAttribute("tweet", new Post());
+        model.addAttribute("registeredUsers", userService.findAll());
+        return "posts";
     }
 
     @GetMapping("/posts")
@@ -45,12 +52,26 @@ public class PostController {
         List<User> authors = userService.getAuthors(posts);
         model.addAttribute("posts", posts);
         model.addAttribute("authors", authors);
+        model.addAttribute("user", userService.getLoggedInUser());
+        model.addAttribute("registeredUsers", userService.findAll());
+        model.addAttribute("tweet", new Post());
         return "posts";
     }
 
-    @GetMapping("/{userId}/posts")
-    public String getPostsOfUser(@PathVariable Long userId, Model model){
-        List<Post> posts = postService.getPostsOfUser(userId);
+    @GetMapping("/save/{id}")
+    public String savePost(@PathVariable(value = "id") Long postId, Model model) {
+        User loggedInUser = userService.getLoggedInUser();
+        userService.savePost(loggedInUser, postId);
+        List<Post> posts = postService.getPostsOfUser(loggedInUser.getId());
+        model.addAttribute("posts", posts);
+        return "posts";
+    }
+
+    @GetMapping("/retweet/{id}")
+    public String retweetPost(@PathVariable(value = "id") Long postId, Model model) {
+        User loggedInUser = userService.getLoggedInUser();
+        userService.retweetPost(loggedInUser, postId);
+        List<Post> posts = postService.getPostsOfUser(loggedInUser.getId());
         model.addAttribute("posts", posts);
         return "posts";
     }

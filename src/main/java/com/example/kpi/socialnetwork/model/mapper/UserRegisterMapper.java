@@ -13,7 +13,11 @@ public class UserRegisterMapper {
         user.setPassword(userRegisterDto.getPassword());
         user.setFullName(userRegisterDto.getFullName());
         user.setConfirmPassword(userRegisterDto.getConfirmPassword());
-        user.setImage(userRegisterDto.getImage());
+        user.setAvatar(userRegisterDto.getAvatar());
+        user.setBackground(userRegisterDto.getBackground());
+        user.setPhone(userRegisterDto.getPhone());
+        user.setAddress(userRegisterDto.getAddress());
+        user.setDateOfBirth(userRegisterDto.getDateOfBirth());
         return user;
     }
 
@@ -23,7 +27,11 @@ public class UserRegisterMapper {
         userRegisterDto.setPassword(user.getPassword());
         userRegisterDto.setFullName(user.getFullName());
         userRegisterDto.setConfirmPassword(user.getConfirmPassword());
-        userRegisterDto.setImage(user.getImage());
+        userRegisterDto.setAvatar(user.getAvatar());
+        userRegisterDto.setBackground(user.getBackground());
+        userRegisterDto.setPhone(user.getPhone());
+        userRegisterDto.setAddress(user.getAddress());
+        userRegisterDto.setDateOfBirth(user.getDateOfBirth());
         return userRegisterDto;
     }
 }
