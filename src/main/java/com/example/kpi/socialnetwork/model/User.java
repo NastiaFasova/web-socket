@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -29,16 +30,32 @@ public class User {
     private String email;
     private String password;
     private String confirmPassword;
-    private String image;
+    private String background;
+    private String avatar;
+    private String phone;
+    private String address;
+    private LocalDate dateOfBirth;
     private String description;
     @OneToMany
     private List<Post> posts;
+    @OneToMany
+    private List<Post> likes;
+    @OneToMany
+    private List<Post> saved;
 
     @Transient
     public String getPhotosImagePath() {
-        if (image == null || id == null) {
+        if (background == null || id == null) {
             return null;
         }
-        return "/user-photos/" + id + "/" + image;
+        return "/user-photos/" + id + "/" + background;
+    }
+
+    @Transient
+    public String getAvatarImagePath() {
+        if (avatar == null || id == null) {
+            return null;
+        }
+        return "/user-photos/" + id + "/avatar/" + avatar;
     }
 }

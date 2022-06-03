@@ -15,4 +15,10 @@ public interface UserService {
     User getUserById(Long userId);
 
     List<User> getAuthors(List<Post> posts);
+
+    List<User> findAll();
+
+    User savePost(User user, Long postId);
+
+    User retweetPost(User loggedInUser, Long postId);
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -40,7 +41,8 @@ public class InjectDataController {
                 .fullName("William Wider")
                 .email("william@gmail.com")
                 .fullName("William Wider")
-                .password("09092001").build();
+                .password("09092001")
+                .confirmPassword("09092001").build();
         registrationService.register(user);
 
         Post post = Post.builder()

@@ -24,6 +24,6 @@ public class FriendshipController {
         User user = userService.getUserById(id);
         User loggedInUser = userService.getLoggedInUser();
         friendshipService.follow(loggedInUser, user);
-        return "profile";
+        return "posts";
     }
 }

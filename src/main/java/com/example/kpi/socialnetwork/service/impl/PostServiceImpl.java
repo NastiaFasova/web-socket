@@ -1,5 +1,6 @@
 package com.example.kpi.socialnetwork.service.impl;
 
+import com.example.kpi.socialnetwork.model.Like;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.repository.PostRepository;
@@ -44,5 +45,22 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> getAllPosts() {
         return postRepository.findAllByOrderByIdDesc();
+    }
+
+    @Override
+    public Post findById(Long postId) {
+        return postRepository.findById(postId).orElseThrow();
+    }
+
+    @Override
+    public List<Post> getSavedPostsOfUser(String email) {
+        User user = userRepository.findByEmail(email);
+        return user.getSaved();
+    }
+
+    @Override
+    public List<Post> getLikedPostsOfUser(String email) {
+        User user = userRepository.findByEmail(email);
+        return user.getLikes();
     }
 }
