@@ -13,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
 
     Optional<User> findById(Long id);
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.likes where u.id =:id")
+    Optional<User> findByIdFetchLikes(Long id);
 }

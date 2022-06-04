@@ -45,8 +45,8 @@ public class UserController {
     public String myPosts(Model model) throws NullPointerException {
         User user = userService.getLoggedInUser();
         List<Post> posts = postService.getPostsOfUser(user.getId());
-        List<Friendship> followers = friendshipService.getFollowersOfUser(user.getId());
-        List<Friendship> followings = friendshipService.getFollowingsOfUser(user.getId());
+        List<User> followers = friendshipService.getFollowersOfUser(user.getId());
+        List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
         model.addAttribute("posts", posts);
         model.addAttribute("user", user);
         model.addAttribute("followers", followers);

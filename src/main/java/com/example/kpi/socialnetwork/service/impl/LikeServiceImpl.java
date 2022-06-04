@@ -33,10 +33,10 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public Like addLikeToPost(Long postId, Long loggedInUserId) {
         Post post = postRepository.findById(postId).orElse(null);
-        User user = userRepository.findById(loggedInUserId).orElse(null);
-        if (post != null) {
+        User user = userRepository.findByIdFetchLikes(loggedInUserId).orElse(null);
+        if (post != null && user != null) {
             Like likeByUserAndPost = post.getLikes().stream()
-                    .filter(l -> l.getUser().equals(user))
+                    .filter(l -> l.getUser().getId().equals(loggedInUserId))
                     .findAny()
                     .orElse(null);
 
@@ -46,6 +46,8 @@ public class LikeServiceImpl implements LikeService {
                 post.getLikes().add(like);
                 likeRepository.save(like);
                 postRepository.save(post);
+                user.getLikes().add(post);
+                userRepository.save(user);
                 return like;
             }
             Iterator<Like> i = post.getLikes().iterator();
@@ -56,8 +58,8 @@ public class LikeServiceImpl implements LikeService {
                     break;
                 }
             }
-            likeRepository.delete(likeByUserAndPost);
             postRepository.save(post);
+            likeRepository.delete(likeByUserAndPost);
             return likeByUserAndPost;
         }
         throw new RuntimeException();
@@ -69,7 +71,7 @@ public class LikeServiceImpl implements LikeService {
         User user = userRepository.findById(loggedInUserId).orElse(null);
         if (comment != null) {
             Like likeByUserAndPost = comment.getLikes().stream()
-                    .filter(l -> l.getUser().equals(user))
+                    .filter(l -> l.getUser().getId().equals(loggedInUserId))
                     .findAny()
                     .orElse(null);
 
@@ -81,6 +83,16 @@ public class LikeServiceImpl implements LikeService {
                 commentRepository.save(comment);
                 return like;
             }
+            Iterator<Like> i = comment.getLikes().iterator();
+            while (i.hasNext()) {
+                Like like = i.next();
+                if (like.equals(likeByUserAndPost)) {
+                    i.remove();
+                    break;
+                }
+            }
+            commentRepository.save(comment);
+            likeRepository.delete(likeByUserAndPost);
             return likeByUserAndPost;
         }
         throw new RuntimeException();

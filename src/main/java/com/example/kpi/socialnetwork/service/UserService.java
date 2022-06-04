@@ -21,4 +21,6 @@ public interface UserService {
     User savePost(User user, Long postId);
 
     User retweetPost(User loggedInUser, Long postId);
+
+    User deletePost(User loggedInUser, Long postId);
 }

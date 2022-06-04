@@ -17,16 +17,16 @@
 <body>
     <div class="header fixed-top">
         <header class="container-fluid">
-          <a href="/index.html">
+          <a th:href="@{/posts}">
             <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
             <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
           </a>
           <ul class="nav justify-content-center">
               <li class="nav-item">
-                <a class="nav-link active noto" th:href="@{/me}">Home</a>
+                <a class="nav-link noto" th:href="@{/me}">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link noto" th:href="@{/posts}">Explore</a>
+                <a class="nav-link active noto" th:href="@{/posts}">Explore</a>
               </li>
           </ul>
 
@@ -106,25 +106,30 @@
             </div>
 
             <div class="post-buttons d-flex justify-content-around">
+              <a th:href="@{/comment/{id}(id=${post.id})}">
               <button class="post-button comment-btn">
                 <img src="/img/comment.svg" alt="" width="20px" height="20px">
                 <span th:text="${post.getComments().size()}">Comment</span>
               </button>
+              </a>
+              <a th:href="@{/retweet/{id}(id=${post.id})}">
               <button class="post-button retweet-btn active">
                 <img src="/img/refresh.svg" alt="" width="32px" height="32px">
                 <span th:text="${post.getComments().size()}">Retweeted</span>
               </button>
-              <a th:href="@{/likes/comment/{id}(id=${post.id})}">
+              </a>
+              <a th:href="@{/likes/post/{id}(id=${post.id})}">
               <button class="post-button like-btn  active">
                 <img src="/img/like.svg" alt="" width="32px" height="32px">
                 <span th:text="${post.getLikes().size()}">Liked</span>
               </button>
               </a>
-              <button onclick="window.location.href='@{/save/{id}(id=${post.id})}';"
-                      class="post-button save-btn active">
+              <a th:href="@{/save/{id}(id=${post.id})}">
+              <button class="post-button save-btn active">
                 <img src="/img/bookmark.svg" alt="" width="25px" height="25px">
                 <span th:text="${post.getLikes().size()}">Saved</span>
               </button>
+              </a>
             </div>
 
             <div class="post-reply d-flex">
@@ -181,51 +186,32 @@
             <span class="tag-tweets">1k Tweets</span>
           </div>
         </div>
-        <div class="d-flex flex-column who-to-follow">
+        <div class="d-flex flex-column who-to-follow" th:each="user : ${registeredUsers}">
           <span class="poppins-500">Who to follow</span>
           <hr>
           <div class="d-flex flex-column follow-user">
             <div class="d-flex justify-content-between">
               <img src="/img/avatar.jpg" alt="" width="40px" height="40px">
               <div class="d-flex flex-column">
-                <h6 class="follow-user-name">Mikael Stanley</h6>
+                <h6 class="follow-user-name" th:text="${user.fullName}"></h6>
                 <span class="user-followers">230k followers</span>
               </div>
               <div class="d-flex flex-column justify-content-center">
+                <a th:href="@{/follow/{id}(id=${user.id})}">
                 <button class="follow-btn">
                   <div class="d-flex justify-content-center">
                     <img src="/img/follow.svg" alt="" width="36px" height="36px">
                     <span class="d-inline-flex flex-column justify-content-center">Follow</span>
                   </div>
                 </button>
+                </a>
               </div>
             </div>
             <div class="follow-desc">
-              <span>Photographer & Filmmaker based in Copenhagen, Denmark ✵ 🇩🇰</span>
+              <span th:text="${user.description}"></span>
             </div>
             <div class="follow-user-bg"></div>
             <hr>
-          </div>
-          <div class="d-flex flex-column follow-user">
-            <div class="d-flex justify-content-between">
-              <img src="/img/avatar.jpg" alt="" width="40px" height="40px">
-              <div class="d-flex flex-column">
-                <h6 class="follow-user-name">Mikael Stanley</h6>
-                <span class="user-followers">230k followers</span>
-              </div>
-              <div class="d-flex flex-column justify-content-center">
-                <button class="follow-btn">
-                  <div class="d-flex justify-content-center">
-                    <img src="/img/follow.svg" alt="" width="36px" height="36px">
-                    <span class="d-inline-flex flex-column justify-content-center">Follow</span>
-                  </div>
-                </button>
-              </div>
-            </div>
-            <div class="follow-desc">
-              <span ></span>
-            </div>
-            <div class="follow-user-bg"></div>
           </div>
         </div>
       </div>

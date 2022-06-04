@@ -45,7 +45,7 @@ public class LikeController {
     @GetMapping("/post/{id}")
     public String likePost(@PathVariable Long id) {
         likeService.addLikeToPost(id, userService.getLoggedInUser().getId());
-        return "profile";
+        return "redirect:/likes";
     }
 
     @GetMapping

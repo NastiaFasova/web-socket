@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.LocalDate;
@@ -36,11 +36,11 @@ public class User {
     private String address;
     private LocalDate dateOfBirth;
     private String description;
-    @OneToMany
+    @ManyToMany
     private List<Post> posts;
-    @OneToMany
+    @ManyToMany
     private List<Post> likes;
-    @OneToMany
+    @ManyToMany
     private List<Post> saved;
 
     @Transient
