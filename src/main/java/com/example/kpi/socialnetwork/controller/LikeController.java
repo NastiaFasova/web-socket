@@ -1,5 +1,6 @@
 package com.example.kpi.socialnetwork.controller;
 
+import com.example.kpi.socialnetwork.common.UserPost;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.service.LikeService;
@@ -32,10 +33,8 @@ public class LikeController {
     @GetMapping("/comment/{id}")
     public String likeComment(@PathVariable Long id, Model model) {
         likeService.addLikeToComment(id, userService.getLoggedInUser().getId());
-        List<Post> posts = postService.getAllPosts();
-        List<User> authors = userService.getAuthors(posts);
+        List<UserPost> posts = postService.getAllPosts();
         model.addAttribute("posts", posts);
-        model.addAttribute("authors", authors);
         model.addAttribute("user", userService.getLoggedInUser());
         model.addAttribute("registeredUsers", userService.findAll());
         model.addAttribute("tweet", new Post());

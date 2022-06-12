@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/layout_form}"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,10 +16,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <div class="header fixed-top">
-        <header class="container-fluid">
-            <img class="d-none d-lg-block" src="img/tweeter.svg" alt="logo">
-            <img class="d-block d-lg-none" src="img/tweeter-small.svg" alt="logo">
-        </header>
+        <header th:replace="fragments/header :: header('false', 'false', 'false')"></header>
     </div>
     <section class="d-flex flex-column justify-content-center min-vh-90">
         <div class="container-fluid ps-md-0">
@@ -32,12 +30,12 @@
                           <!-- Sign In Form -->
                           <form>
                             <div class="form-floating mb-3">
-                              <input type="email" name = "login" class="form-control" id="floatingInput" placeholder="name@example.com">
-                              <label for="floatingInput poppins-600">Email address</label>
+                              <input type="email" name = "login" class="form-control poppins-600" id="floatingInput" placeholder="name@example.com">
+                              <label for="floatingInput" class="poppins-600">Email address</label>
                             </div>
                             <div class="form-floating mb-3 d-none">
-                              <input type="password" class="form-control" name="password" id="floatingPassword" placeholder="Password">
-                              <label for="floatingPassword poppins-600">Password</label>
+                              <input type="password" class="form-control poppins-600" name="password" id="floatingPassword" placeholder="Password">
+                              <label for="floatingPassword" class="poppins-600">Password</label>
                             </div>
             
                             <div class="d-grid">

@@ -1,0 +1,40 @@
+<header class="container-fluid" th:fragment="header(showLinks, showAvatar, isHomePage)">
+    <a th:href="@{/me}">
+        <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
+        <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
+    </a>
+    <ul class="nav justify-content-center" th:if="${showLinks}">
+        <li class="nav-item">
+            <a class="nav-link noto" th:classappend="${isHomePage} ? 'active' : ''" th:href="@{/me}">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link noto" th:classappend="${isHomePage} ? '' : 'active'" th:href="@{/posts}">Explore</a>
+        </li>
+    </ul>
+
+    <div class="d-flex" th:if="${showAvatar}">
+        <div class="d-none d-lg-block"></div>
+        <img src="@{${user.avatarImagePath}}" alt="" width="32" height="36" style="margin-top: 5px;">
+        <div class="dropdown user-avatar d-inline-flex flex-column justify-content-center">
+            <a class="dropdown-toggle poppins-600" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                <span th:text="${currentUser.fullName}"></span>
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <li>
+                    <a class="dropdown-item d-flex" th:href="@{/me}">
+                        <img src="/img/profile.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
+                        <span>My profile</span>
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="logout d-flex dropdown-item" th:href="@{/logout}">
+                        <img src="/img/logout.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
+                        <span>Log out</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>

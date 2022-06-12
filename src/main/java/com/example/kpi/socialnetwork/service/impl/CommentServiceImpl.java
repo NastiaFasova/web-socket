@@ -5,6 +5,7 @@ import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.repository.CommentRepository;
 import com.example.kpi.socialnetwork.repository.PostRepository;
 import com.example.kpi.socialnetwork.service.CommentService;
+import com.example.kpi.socialnetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,13 @@ import java.util.ArrayList;
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final UserService userService;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, UserService userService) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -33,6 +36,20 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findByIdFetchComments(postId).orElseThrow();
         post.getComments().add(savedComment);
         postRepository.save(post);
-        return comment;
+        return savedComment;
+    }
+
+    @Override
+    public Comment createComment(Long postId, String content) {
+        Comment savedComment = Comment.builder()
+                .username(userService.getLoggedInUser().getFullName())
+                .localDateTime(LocalDateTime.now())
+                .content(content)
+                .likes(new ArrayList<>()).build();
+        savedComment = commentRepository.save(savedComment);
+        Post post = postRepository.findByIdFetchComments(postId).orElseThrow();
+        post.getComments().add(savedComment);
+        postRepository.save(post);
+        return savedComment;
     }
 }

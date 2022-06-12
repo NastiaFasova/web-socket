@@ -142,6 +142,8 @@ main{
     img{
         width: 100%;
         border-radius: 8px;
+        max-height: 330px;
+        overflow: hidden;
     }
 }
 
@@ -337,6 +339,28 @@ main{
     bottom: -0.5%;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
+}
+
+.post-author{
+    .user-avatar{
+        margin-left: 0px;
+    }
+
+    .dropdown-toggle{
+        margin-left: 0px;
+        font-family: 'Noto Sans';
+        font-size: 12px;
+        color: #333333;
+        text-decoration: none;
+        
+        &::after{
+            align-self: center;
+        }
+    }
+
+    .dropdown-item{
+        width: 80%;
+    }
 }
 
 @media (max-width: 1010px)
