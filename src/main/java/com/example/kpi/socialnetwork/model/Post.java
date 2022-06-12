@@ -7,12 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,5 +30,15 @@ public class Post {
     private List<Comment> comments;
     @OneToMany
     private List<Like> likes;
+
+    @Transient
+    public String getImagePath()
+    {
+        if (id == null || image == null || image.isEmpty() || image.isBlank())
+        {
+            return "";
+        }
+        return String.format("user-photos/posts/%d/%s", id, image);
+    }
 
 }

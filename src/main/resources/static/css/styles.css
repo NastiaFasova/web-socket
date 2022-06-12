@@ -141,6 +141,8 @@ main {
 .post-thumbnail img {
   width: 100%;
   border-radius: 8px;
+  max-height: 330px;
+  overflow: hidden;
 }
 
 .post-rate span {
@@ -334,6 +336,26 @@ main {
   bottom: -0.5%;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+}
+
+.post-author .user-avatar {
+  margin-left: 0px;
+}
+
+.post-author .dropdown-toggle {
+  margin-left: 0px;
+  font-family: 'Noto Sans';
+  font-size: 12px;
+  color: #333333;
+  text-decoration: none;
+}
+
+.post-author .dropdown-toggle::after {
+  align-self: center;
+}
+
+.post-author .dropdown-item {
+  width: 80%;
 }
 
 @media (max-width: 1010px) {

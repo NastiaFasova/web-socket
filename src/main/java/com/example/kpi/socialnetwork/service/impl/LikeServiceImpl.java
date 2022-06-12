@@ -50,17 +50,10 @@ public class LikeServiceImpl implements LikeService {
                 userRepository.save(user);
                 return like;
             }
-            Iterator<Like> i = post.getLikes().iterator();
-            while (i.hasNext()) {
-                Like like = i.next();
-                if (like.equals(likeByUserAndPost)) {
-                    i.remove();
-                    break;
-                }
-            }
+            post.getLikes().remove(likeByUserAndPost);
             postRepository.save(post);
             likeRepository.delete(likeByUserAndPost);
-            return likeByUserAndPost;
+            return null;
         }
         throw new RuntimeException();
     }
@@ -83,17 +76,11 @@ public class LikeServiceImpl implements LikeService {
                 commentRepository.save(comment);
                 return like;
             }
-            Iterator<Like> i = comment.getLikes().iterator();
-            while (i.hasNext()) {
-                Like like = i.next();
-                if (like.equals(likeByUserAndPost)) {
-                    i.remove();
-                    break;
-                }
-            }
+
+            comment.getLikes().remove(likeByUserAndPost);
             commentRepository.save(comment);
             likeRepository.delete(likeByUserAndPost);
-            return likeByUserAndPost;
+            return null;
         }
         throw new RuntimeException();
     }

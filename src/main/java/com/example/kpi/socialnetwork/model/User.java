@@ -46,7 +46,7 @@ public class User {
     @Transient
     public String getPhotosImagePath() {
         if (background == null || id == null) {
-            return null;
+            return "";
         }
         return "/user-photos/" + id + "/" + background;
     }
@@ -54,8 +54,8 @@ public class User {
     @Transient
     public String getAvatarImagePath() {
         if (avatar == null || id == null) {
-            return null;
+            return "";
         }
-        return "/user-photos/" + id + "/avatar/" + avatar;
+        return "/user-photos/avatar/" + id + "/" + avatar;
     }
 }

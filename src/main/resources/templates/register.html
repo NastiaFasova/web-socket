@@ -16,10 +16,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <div class="header fixed-top">
-        <header class="container-fluid">
-            <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
-            <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
-        </header>
+        <header th:replace="fragments/header :: header('false', 'false', 'false')"></header>
     </div>
     <section class="d-flex flex-column justify-content-center min-vh-90">
         <div class="container-fluid ps-md-0">

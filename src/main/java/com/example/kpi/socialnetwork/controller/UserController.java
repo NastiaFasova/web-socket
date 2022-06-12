@@ -15,10 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -49,8 +46,30 @@ public class UserController {
         List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
         model.addAttribute("posts", posts);
         model.addAttribute("user", user);
+        model.addAttribute("currentUser", user);
         model.addAttribute("followers", followers);
         model.addAttribute("followings", followings);
+        model.addAttribute("isCurrentUser", true);
+        return "profile";
+    }
+
+    @GetMapping("/user/{id}")
+    public String userPosts(Model model, @PathVariable("id") long id) throws NullPointerException {
+        User currentUser = userService.getLoggedInUser();
+        if (currentUser.getId() == id)
+        {
+            return "redirect:/me";
+        }
+        User user = userService.getUserById(id);
+        List<Post> posts = postService.getPostsOfUser(user.getId());
+        List<User> followers = friendshipService.getFollowersOfUser(user.getId());
+        List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
+        model.addAttribute("posts", posts);
+        model.addAttribute("user", user);
+        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("followers", followers);
+        model.addAttribute("followings", followings);
+        model.addAttribute("isCurrentUser", false);
         return "profile";
     }
 

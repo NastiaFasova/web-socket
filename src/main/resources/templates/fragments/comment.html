@@ -1,0 +1,26 @@
+<div class="post-comment d-flex" th:fragment="comment">
+    <div class="post-comment-avatar d-flex flex-column justify-content-start">
+        <img src="/img/avatar.jpg" alt="" width="45px" height="45px">
+    </div>
+    <div class="d-flex flex-column" style="width:100%;">
+        <div class="post-comment-body">
+            <div class="post-comment-body-container d-flex flex-column">
+                <div class="post-comment-author d-flex">
+                    <h6 th:text="${comment.username}"></h6>
+                    <span class="small-text light-gray"
+                          th:text="${{comment.getLocalDateTime()}}"></span>
+                </div>
+                <div class="post-comment-content" >
+                    <p th:text="${comment.getContent()}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="post-comment-rate d-flex justify-content-start">
+            <button class="like-button d-flex" th:attr="data-comment-id=${comment.id}">
+                <img src="/img/like.svg" alt="" width="22.57px" height="22.57px">
+                <span>Like</span>
+            </button>
+            <span class="post-comment-likes-counter" th:text="${comment.getLikes().size} + ' Likes'"></span>
+        </div>
+    </div>
+</div>

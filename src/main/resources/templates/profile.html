@@ -15,46 +15,7 @@
 
     <body>
       <div class="header fixed-top">
-        <header class="container-fluid">
-          <a th:href="@{/}">
-            <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
-            <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
-          </a>
-          <ul class="nav justify-content-center">
-              <li class="nav-item">
-                <a class="nav-link active noto" th:href="@{/me}">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link noto" th:href="@{/posts}">Explore</a>
-              </li>
-          </ul>
-
-          <div class="d-flex">
-            <div class="d-none d-lg-block"></div>
-              <img src="/img/avatar.jpg" alt="" width="32" height="36" style="margin-top: 5px;">
-              <div class="dropdown user-avatar d-inline-flex flex-column justify-content-center">
-                <a class="dropdown-toggle poppins-600" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span th:text="${user.fullName}"></span>
-                </a>
-              
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <li>
-                    <a class="dropdown-item d-flex" th:href="@{/me}">
-                      <img src="/img/profile.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
-                      <span>My profile</span>
-                    </a>
-                  </li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li>
-                    <a class="logout d-flex dropdown-item" th:href="@{/logout}">
-                      <img src="/img/logout.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
-                      <span>Log out</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-          </div>
-      </header>
+        <header th:replace="fragments/header :: header('true', 'true', 'true')"></header>
       </div>
       <!-- Panorama -->
       <div id="panorama" th:style="'background-image:url(' + ${user.photosImagePath} + ');'"></div>
@@ -63,7 +24,7 @@
             <div class="white-bg half-panel"></div>
             <div class="profile-image-container d-none d-flex-1000 justify-content-center">
               <div class="profile-image">
-                <img src="/img/avatar.jpg" alt="">
+                <img th:src="@{${user.avatarImagePath}}" alt="">
               </div>
             </div>
           </div>
@@ -85,26 +46,24 @@
                     </div>
                   </div>
 
-                  <a th:href="@{/edit}">
-                  <button type="submit" class="follow-btn follow-btn-lg">
+                  <button th:unless="${isCurrentUser}" th:href="@{/follow/{id}(id=${user.id})}" type="submit" class="follow-btn follow-btn-lg">
                     <div>
                       <img src="/img/follow.svg" alt="" width="48px" height="48px">
-                      <span>Edit</span>
+                      <span>Follow</span>
                     </div>
                   </button>
-                  </a>
 
                 </div>
                 <div class="profile-desc">
                   <span class="light" th:text="${user.description}"></span>
                 </div>
 
-<!--                <button  type="submit" class="d-none follow-btn follow-btn-sm" th:href="@{/edit}">-->
-<!--                  <div>-->
-<!--                    <img src="/img/follow.svg" alt="" width="48px" height="48px">-->
-<!--                    <span>Edit</span>-->
-<!--                  </div>-->
-<!--                </button>-->
+                <button th:unless="${isCurrentUser}" type="submit" class="d-none follow-btn follow-btn-sm" th:href="@{/follow/{id}(id=${user.id})}">
+                  <div>
+                    <img src="/img/follow.svg" alt="" width="48px" height="48px">
+                    <span>Follow</span>
+                  </div>
+                </button>
               </div>
           </div>
 
@@ -126,128 +85,11 @@
                 </ul>
               </div>
 
-              <div class="d-flex flex-column posts-container">
-                <div class="post" th:each="post : ${posts}">
-                  <div class="d-flex">
-                    <div class="d-none d-lg-block"></div>
-                    <img src="/img/avatar.jpg" alt="" width="32" height="36" style="margin-top: 5px;">
-                    <div class="dropdown user-avatar d-inline-flex flex-column justify-content-center">
-                      <a class="dropdown-toggle poppins-600" href="#" role="button" id="dropdownMenuLink"
-                         data-bs-toggle="dropdown" aria-expanded="false">
-                        <span th:text="${user.fullName}"></span>
-                      </a>
-
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li>
-                          <a class="dropdown-item d-flex" th:href="@{/edit-post}">
-                            <img src="/img/profile.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
-                            <span>Edit</span>
-                          </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                          <a class="logout d-flex dropdown-item" th:href="@{/delete-post/{id}(id=${post.id})}">
-                            <img src="/img/logout.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
-                            <span>Delete</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="post-container">
-                    <div class="post-author d-flex">
-                      <div class="post-autor-avatar">
-                        <img th:src="${post.image}" alt="" width="40px" height="40px">
-                      </div>
-                      <div class="d-flex flex-column">
-                        <h6 class="poppins-500" th:text="${user.fullName}"></h6>
-                        <span class="small-text light-gray" th:text="${{post.createdTime}}"></span>
-                      </div>
-                    </div>
-
-                    <div class="post-description">
-                      <span class="noto" th:text="${post.content}"></span>
-                    </div>
-
-                    <div class="post-thumbnail">
-                      <img src="/img/unsplash_E2HgkL3LaFE.png" alt="">
-                    </div>
-
-                    <div class="post-rate d-flex justify-content-end">
-                      <span th:text="${post.getComments().size()}">449 Comments</span>
-                      <span>59k Retweets</span>
-                      <span>234 Saved</span>
-                    </div>
-
-                    <div class="post-buttons d-flex justify-content-around">
-                      <a th:href="@{/comment/{id}(id=${post.id})}">
-                      <button class="post-button comment-btn">
-                        <img src="/img/comment.svg" alt="" width="20px" height="20px">
-                        <span th:text="${post.getComments().size()}">Comment</span>
-                      </button>
-                      </a>
-                      <a th:href="@{/retweet/{id}(id=${post.id})}">
-                      <button class="post-button retweet-btn active">
-                        <img src="/img/refresh.svg" alt="" width="32px" height="32px">
-                        <span>Retweeted</span>
-                      </button>
-                      </a>
-                      <a th:href="@{/likes/post/{id}(id=${post.id})}">
-                      <button class="post-button like-btn  active">
-                        <img src="/img/like.svg" alt="" width="32px" height="32px">
-                        <span th:text="${post.getLikes().size()}">Liked</span>
-                      </button>
-                      </a>
-                      <a th:href="@{/save/{id}(id=${post.id})}">
-                      <button class="post-button save-btn  active">
-                        <img src="/img/bookmark.svg" alt="" width="25px" height="25px">
-                        <span>Saved</span>
-                      </button>
-                      </a>
-                    </div>
-
-                    <div class="post-reply d-flex">
-                      <div class="replyer-avatar">
-                        <img src="/img/avatar.jpg" alt="" width="40px" height="45px">
-                      </div>
-                      <input type="text" placeholder="Tweet your reply">
-                    </div>
-                    
-                    <hr>
-
-                    <div class="post-comment d-flex">
-                      <div class="post-comment-avatar d-flex flex-column justify-content-start">
-                        <img src="/img/avatar.jpg" alt="" width="45px" height="45px">
-                      </div>
-                      <div class="d-flex flex-column" style="width:100%;" th:each="comment : ${post.getComments()}">
-                        <div class="post-comment-body">
-                          <div class="post-comment-body-container d-flex flex-column">
-                            <div class="post-comment-author d-flex">
-                              <h6 th:text="${comment.username}"></h6>
-                              <span class="small-text light-gray"
-                                    th:text="${{comment.getLocalDateTime()}}"></span>
-                            </div>
-                            <div class="post-comment-content" >
-                              <p th:text="${comment.getContent()}"></p>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="post-comment-rate d-flex justify-content-start">
-                          <a th:href="@{/likes/comment/{id}(id=${post.id})}">
-                          <button class="d-flex" >
-                            <img src="/img/like.svg" alt="" width="22.57px" height="22.57px">
-                            <span >Like</span>
-                          </button>
-                          </a>
-                          <span class="post-comment-likes-counter" th:text="${comment.getLikes().size}">Likes</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <div class="d-flex flex-column posts-container" th:with="postAuthor = ${user}" th:insert="fragments/posts :: posts"></div>
             </div>
         </main>
+        <script src="/js/likes.js"></script>
+        <script src="/js/comment.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     </body>
 </html>
