@@ -1,5 +1,6 @@
 package com.example.kpi.socialnetwork.service.impl;
 
+import com.example.kpi.socialnetwork.common.UserComment;
 import com.example.kpi.socialnetwork.common.UserPost;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
@@ -161,6 +162,17 @@ public class PostServiceImpl implements PostService {
                 }
                 var savesCount = users.stream().filter(u -> u.getSaved().stream().anyMatch(s -> s.getId().equals(post.getId()))).count();
                 var userPost = new UserPost(user, post);
+
+                var comments = new ArrayList<UserComment>();
+                for (var comment : post.getComments())
+                {
+                    var commentAuthor = users.stream().filter(u -> u.getEmail().equals(comment.getUserEmail())).findFirst().orElse(null);
+                    if (commentAuthor != null)
+                    {
+                        comments.add(new UserComment(comment, commentAuthor));
+                    }
+                }
+                userPost.setComments(comments.stream().sorted((l, r) -> r.getLocalDateTime().compareTo(l.getLocalDateTime())).collect(Collectors.toList()));
                 userPost.setLiked(userPost.getLikes().stream().anyMatch(like -> like.getUser().getId().equals(currentUser.getId())));
                 userPost.setSaved(currentUser.getSaved().stream().anyMatch(p -> p.getId().equals(userPost.getId())));
                 userPost.setSavesCount(savesCount);

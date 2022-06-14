@@ -1,5 +1,6 @@
 package com.example.kpi.socialnetwork.service.impl;
 
+import com.example.kpi.socialnetwork.common.UserComment;
 import com.example.kpi.socialnetwork.model.Comment;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.repository.CommentRepository;
@@ -31,6 +32,7 @@ public class CommentServiceImpl implements CommentService {
                 .username(comment.getUsername())
                 .localDateTime(LocalDateTime.now())
                 .content(comment.getContent())
+                .userEmail(comment.getUserEmail())
                 .likes(new ArrayList<>()).build();
         commentRepository.save(savedComment);
         Post post = postRepository.findByIdFetchComments(postId).orElseThrow();
@@ -40,9 +42,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment createComment(Long postId, String content) {
+    public UserComment createComment(Long postId, String content) {
+        var currentUser = userService.getLoggedInUser();
         Comment savedComment = Comment.builder()
-                .username(userService.getLoggedInUser().getFullName())
+                .username(currentUser.getFullName())
+                .userEmail(currentUser.getEmail())
                 .localDateTime(LocalDateTime.now())
                 .content(content)
                 .likes(new ArrayList<>()).build();
@@ -50,6 +54,7 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findByIdFetchComments(postId).orElseThrow();
         post.getComments().add(savedComment);
         postRepository.save(post);
-        return savedComment;
+
+        return new UserComment(savedComment, currentUser);
     }
 }
