@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,6 +42,12 @@ public class UserServiceImpl implements UserService {
     public User getLoggedInUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return getByEmail(((UserDetails) principal).getUsername());
+    }
+
+    @Override
+    public List<User> findAllExceptCurrent() {
+        var current = getLoggedInUser();
+        return findAll().stream().filter(user -> !user.getId().equals(current.getId())).collect(Collectors.toList());
     }
 
     @Override
@@ -72,6 +79,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User savePost(User user, Long postId) {
         Post originalPost = postRepository.getById(postId);
+        if (user.getSaved().stream().anyMatch(s -> s.getId().equals(originalPost.getId())))
+        {
+            user.getSaved().remove(originalPost);
+            userRepository.save(user);
+            return null;
+        }
         user.getSaved().add(originalPost);
         return userRepository.save(user);
     }
@@ -91,21 +104,5 @@ public class UserServiceImpl implements UserService {
             user.getPosts().add(newPost);
             return userRepository.save(user);
         } throw new RuntimeException();
-    }
-
-    @Override
-    public User deletePost(User loggedInUser, Long postId) {
-        Post originalPost = postRepository.getById(postId);
-        Iterator<Post> i = loggedInUser.getPosts().iterator();
-        while (i.hasNext()) {
-            Post post = i.next();
-            if (post.getId().equals(postId)) {
-                i.remove();
-                break;
-            }
-        }
-        userRepository.save(loggedInUser);
-        postRepository.delete(originalPost);
-        return loggedInUser;
     }
 }

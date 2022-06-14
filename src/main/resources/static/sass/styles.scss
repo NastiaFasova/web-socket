@@ -363,6 +363,54 @@ main{
     }
 }
 
+.post-delete-btn{
+    span{
+        color: #EB5757;
+    }
+    img{
+        filter: invert(48%) sepia(45%) saturate(855%) hue-rotate(314deg) brightness(94%) contrast(95%);
+    }
+}
+
+.modal{
+    .follow-btn{
+        img{
+            position: relative;
+            bottom: 6px;
+            filter: invert(98%) sepia(100%) saturate(6%) hue-rotate(132deg) brightness(103%) contrast(103%);
+        }
+    }
+
+    .follow-user-info{
+        margin-left: 20px;
+    }
+
+    .user-followers{
+        font-family: 'Noto Sans';
+        font-size: 12px;
+        color: #828282;
+    }
+    
+
+    .follow-user-name{
+        margin-bottom: 2px;
+    }
+
+    .follow-desc{
+        width: 95%;
+    }
+
+    .follow-user{
+        hr{
+            margin: 20px 0px;
+        }
+    
+        a{
+            text-decoration: none!important;
+        }
+    }
+}
+
 @media (max-width: 1010px)
 {
     main{

@@ -1,4 +1,4 @@
-<div class="post" th:fragment="post">
+<div class="post" th:classappend="'post-'+${post.id}" th:fragment="post">
     <div class="post-container">
         <div class="post-author d-flex">
             <div class="post-autor-avatar">
@@ -12,14 +12,14 @@
                     </a>
                     <ul class="dropdown-menu" th:attr="aria-labelledby='dropdown-'+${post.id}">
                         <li>
-                            <a class="dropdown-item d-flex" th:href="@{/edit-post}">
+                            <a class="dropdown-item d-flex post-edit-btn" th:attr="data-post-id=${post.id}">
                                 <img src="/img/edit.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
                                 <span>Edit</span>
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="logout d-flex dropdown-item" th:href="@{/delete-post/{id}(id=${post.id})}">
+                            <a class="d-flex dropdown-item post-delete-btn" th:attr="data-post-id=${post.id}">
                                 <img src="/img/delete.svg" alt="" class="dropdown-item-icon" width="24px" height="24px">
                                 <span>Delete</span>
                             </a>
@@ -31,18 +31,17 @@
         </div>
 
         <div class="post-description">
-            <span class="noto" th:text="${post.content}"></span>
+            <span class="noto" th:classappend="'post-'+${post.id}+'content'" th:text="${post.content}"></span>
         </div>
 
         <div class="post-thumbnail" th:if="${not #strings.isEmpty(post.imagePath)}">
-            <img th:src="@{${post.imagePath}}" alt="">
+            <img th:class="'post-'+${post.id}+'thumb'" th:src="@{${post.imagePath}}" alt="">
         </div>
 
         <div class="post-rate d-flex justify-content-end">
             <span th:text="${post.getLikes().size()} + ' Likes'"></span>
             <span th:text="${post.getComments().size()} + ' Comments'"></span>
-            <span>59k Retweets</span>
-            <span>234 Saved</span>
+            <span th:text="${post.savesCount} + ' Saved'"></span>
         </div>
 
         <div class="post-buttons d-flex justify-content-around">
@@ -53,19 +52,17 @@
             <a th:href="@{/retweet/{id}(id=${post.id})}">
                 <button class="post-button retweet-btn">
                     <img src="/img/refresh.svg" alt="" width="32px" height="32px">
-                    <span>Retweeted</span>
+                    <span>Retweet</span>
                 </button>
             </a>
-            <button class="post-button like-btn" th:attr="data-post-id=${post.id}">
+            <button class="post-button like-btn" th:attr="data-post-id=${post.id}" th:classappend="${post.isLiked} ? 'active' : ''">
                 <img src="/img/like.svg" alt="" width="32px" height="32px">
-                <span>Like</span>
+                <span th:text="${post.isLiked} ? 'Liked' : 'Like'"></span>
             </button>
-            <a th:href="@{/save/{id}(id=${post.id})}">
-                <button class="post-button save-btn">
-                    <img src="/img/bookmark.svg" alt="" width="25px" height="25px">
-                    <span>Saved</span>
-                </button>
-            </a>
+            <button class="post-button save-btn" th:classappend="${post.isSaved} ? 'active' : ''" th:attr="data-post-id=${post.id}">
+                <img src="/img/bookmark.svg" alt="" width="25px" height="25px">
+                <span th:text="${post.isSaved} ? 'Saved' : 'Save'"></span>
+            </button>
         </div>
 
         <div class="post-reply d-flex">

@@ -34,9 +34,9 @@ public class LikeController {
     public String likeComment(@PathVariable Long id, Model model) {
         likeService.addLikeToComment(id, userService.getLoggedInUser().getId());
         List<UserPost> posts = postService.getAllPosts();
-        model.addAttribute("posts", posts);
+        model.addAttribute("postsList", posts);
         model.addAttribute("user", userService.getLoggedInUser());
-        model.addAttribute("registeredUsers", userService.findAll());
+        model.addAttribute("registeredUsers", userService.findAllExceptCurrent());
         model.addAttribute("tweet", new Post());
         return "posts";
     }
@@ -49,12 +49,12 @@ public class LikeController {
 
     @GetMapping
     public String getLikes(Model model) {
-        List<Post> likes = postService.getLikedPostsOfUser(userService.getLoggedInUser().getEmail());
-        model.addAttribute("posts", likes);
-        List<User> authors = userService.getAuthors(likes);
-        model.addAttribute("authors", authors);
-        model.addAttribute("user", userService.getLoggedInUser());
-        model.addAttribute("registeredUsers", userService.findAll());
+        var user = userService.getLoggedInUser();
+        List<UserPost> likes = postService.getLikedPostsOfUser(user.getEmail());
+        model.addAttribute("postsList", likes);
+        model.addAttribute("user", user);
+        model.addAttribute("currentUser", user);
+        model.addAttribute("registeredUsers", userService.findAllExceptCurrent());
         model.addAttribute("tweet", new Post());
         return "posts";
     }

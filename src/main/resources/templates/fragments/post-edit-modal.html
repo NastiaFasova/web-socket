@@ -1,0 +1,28 @@
+<div class="modal fade" th:id="'post-'+${post.id}" tabindex="-1" aria-hidden="true" th:fragment="post-edit-modal">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Edit post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="post-container">
+                    <form action="" class="post-description d-flex edit-post-form">
+                        <textarea name="edit-tweet" id="" class="form-control noto" th:text="${post.content}"></textarea>
+                        <label for="new-edit-tweet-image" class="tweet-load-image">
+                            <img src="/img/image.svg" alt="" width="24px" height="24px">
+                            <input type="file" name="tweet-image" id="new-edit-tweet-image" hidden>
+                        </label>
+                    </form>
+
+                    <div class="post-thumbnail edit-post-thumbnail" th:unless="${#strings.isEmpty(post.imagePath)}">
+                        <img th:src="@{${post.imagePath}}" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn follow-btn edit-tweet-save-btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

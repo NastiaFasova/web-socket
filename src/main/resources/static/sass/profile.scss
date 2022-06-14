@@ -58,10 +58,10 @@
 }
 
 .follow-btn{
-    div{
-        img{
-            margin-top: 5px;
-        }
+    img{
+        position: relative;
+        bottom: 6px;
+        filter: invert(98%) sepia(100%) saturate(6%) hue-rotate(132deg) brightness(103%) contrast(103%);
     }
 
     padding: 4px 12px 4px 9px;

@@ -2,6 +2,7 @@ package com.example.kpi.socialnetwork.util;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -24,5 +25,37 @@ public class FileUploadUtil {
         } catch (IOException ioe) {
             throw new IOException("Could not save image file: " + fileName, ioe);
         }
+    }
+
+    public static String saveTmpFile(Long postId, MultipartFile multipartFile) throws IOException {
+        var path = String.format("user-photos/posts/%d/temp/%s",postId, RandomStringGenerator.generate(7));
+        var fileName = RandomStringGenerator.generate(7);
+
+        saveFile(path, fileName, multipartFile);
+        return Path.of(path, fileName).toString();
+    }
+
+    public static boolean removeFile(String path)
+    {
+        try {
+            return Files.deleteIfExists(Path.of(path));
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean removeDirectory(String path){
+        return removeDirectory(Paths.get(path).toFile());
+    }
+
+    public static boolean removeDirectory(File directoryToBeDeleted)
+    {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                removeDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }

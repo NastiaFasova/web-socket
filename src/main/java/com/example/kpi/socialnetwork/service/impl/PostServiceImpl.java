@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,17 +34,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post savePost(String email, Post post) {
+    public UserPost savePost(String email, Post post) {
         User userByEmail = userRepository.findByEmail(email);
         Post newPost = Post.builder()
                 .content(post.getContent())
                 .image(post.getImage())
                 .createdTime(post.getCreatedTime())
                 .build();
-        postRepository.save(newPost);
+        newPost = postRepository.save(newPost);
         userByEmail.getPosts().add(newPost);
-        userRepository.save(userByEmail);
-        return post;
+        userByEmail = userRepository.save(userByEmail);
+        return new UserPost(userByEmail, newPost);
     }
 
     @Override
@@ -69,41 +70,105 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsOfUser(Long userId) {
+    public List<UserPost> getPostsOfUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
-        return user.getPosts();
+        return convert(user.getPosts());
     }
 
     @Override
     public List<UserPost> getAllPosts() {
+        return convert(null);
+    }
+
+    @Override
+    public UserPost findById(Long postId) {
+        var post = postRepository.findById(postId).orElseThrow();
+        var posts = new ArrayList<Post>();
+        posts.add(post);
+        var res = convert(posts);
+        return res.get(0);
+    }
+
+    @Override
+    public List<UserPost> getSavedPostsOfUser(String email) {
+        User user = userRepository.findByEmail(email);
+        return convert(user.getSaved());
+    }
+
+    @Override
+    public List<UserPost> getLikedPostsOfUser(String email) {
+        User user = userRepository.findByEmail(email);
+        return convert(user.getLikes());
+    }
+
+    @Override
+    public boolean deletePost(Long postId) {
+        var user = userService.getLoggedInUser();
+        deletePost(user.getLikes(), postId);
+        deletePost(user.getPosts(), postId);
+        deletePost(user.getSaved(), postId);
+        userRepository.save(user);
+        postRepository.deleteById(postId);
+        return true;
+    }
+
+    @Override
+    public Post editPost(long postId, String newContent, MultipartFile file) {
+        var post = postRepository.findById(postId).orElse(null);
+        if (post == null)
+        {
+            return null;
+        }
+
+        post.setContent(newContent);
+        if (!file.getOriginalFilename().isEmpty() && post.getImage() != file.getOriginalFilename())
+        {
+            try
+            {
+                FileUploadUtil.saveFile(String.format("user-photos/posts/%d/", post.getId()), file.getOriginalFilename(),file);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            post.setImage(file.getOriginalFilename());
+        }
+        return postRepository.save(post);
+    }
+
+    private void deletePost(List<Post> posts, Long postId){
+        Iterator<Post> i = posts.iterator();
+        while (i.hasNext()) {
+            Post post = i.next();
+            if (post.getId().equals(postId)) {
+                i.remove();
+                break;
+            }
+        }
+    }
+
+    private List<UserPost> convert(List<Post> posts){
+        User currentUser = userService.getLoggedInUser();
         List<User> users = userRepository.findAll();
         var postsList = new ArrayList<UserPost>();
         for (var user : users)
         {
             for (var post : user.getPosts())
             {
-                postsList.add(new UserPost(user, post));
+                if (posts != null && posts.stream().noneMatch(p -> p.getId().equals(post.getId())))
+                {
+                    continue;
+                }
+                var savesCount = users.stream().filter(u -> u.getSaved().stream().anyMatch(s -> s.getId().equals(post.getId()))).count();
+                var userPost = new UserPost(user, post);
+                userPost.setLiked(userPost.getLikes().stream().anyMatch(like -> like.getUser().getId().equals(currentUser.getId())));
+                userPost.setSaved(currentUser.getSaved().stream().anyMatch(p -> p.getId().equals(userPost.getId())));
+                userPost.setSavesCount(savesCount);
+                postsList.add(userPost);
             }
         }
         return postsList.stream()
                 .sorted((l, r) -> r.getCreatedTime().compareTo(l.getCreatedTime()))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public Post findById(Long postId) {
-        return postRepository.findById(postId).orElseThrow();
-    }
-
-    @Override
-    public List<Post> getSavedPostsOfUser(String email) {
-        User user = userRepository.findByEmail(email);
-        return user.getSaved();
-    }
-
-    @Override
-    public List<Post> getLikedPostsOfUser(String email) {
-        User user = userRepository.findByEmail(email);
-        return user.getLikes();
     }
 }
