@@ -1,21 +1,29 @@
 window.addEventListener("load", function (e){
-    document.querySelector('.user-followers-btn').addEventListener('click', function (e){
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.target.dataset.userId)
-        {
-            showModal(`${location.origin}/followers/${e.target.dataset.userId}`);
-        }
-    });
+    let followersBtn = document.querySelector('.user-followers-btn');
+    if (followersBtn)
+    {
+        followersBtn.addEventListener('click', function (e){
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.target.dataset.userId)
+            {
+                showModal(`${location.origin}/followers/${e.target.dataset.userId}`);
+            }
+        });
+    }
 
-    document.querySelector('.user-followings-btn').addEventListener('click', function (e){
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.target.dataset.userId)
-        {
-            showModal(`${location.origin}/followings/${e.target.dataset.userId}`);
-        }
-    });
+    let followingBtn = document.querySelector('.user-followings-btn');
+    if (followingBtn)
+    {
+        followingBtn.addEventListener('click', function (e){
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.target.dataset.userId)
+            {
+                showModal(`${location.origin}/followings/${e.target.dataset.userId}`);
+            }
+        });
+    }
 
     document.querySelector('.posts-container').addEventListener('click', function (e){
         let btn = e.target.localName == 'a'
