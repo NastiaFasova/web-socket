@@ -120,8 +120,13 @@ function editPost(btn, e)
                     bootstrap.Modal.getInstance(modal).hide();
                 })
                 .then(t => {
-                    let fileName = `user-photos/posts/${btn.dataset.postId/temp}`;
-                    fetch(`location.origin/api/files/temp/${fileName}`,{ method: "DELETE" });
+                    let fileName = `user-photos/posts/${btn.dataset.postId}/temp`;
+                    let data = new FormData();
+                    data.append('fileName', fileName);
+                    fetch(`${location.origin}/api/files/temp`,{
+                        method: "DELETE",
+                        body: data
+                    });
                 });
             }
         });

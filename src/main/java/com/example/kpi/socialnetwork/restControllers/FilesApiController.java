@@ -15,8 +15,8 @@ public class FilesApiController {
         return FileUploadUtil.saveTmpFile(postId, file);
     }
 
-    @DeleteMapping("/temp/{fileName}")
-    public boolean deleteFile(@PathVariable("fileName")String fileName){
-        return FileUploadUtil.removeFile(fileName);
+    @DeleteMapping("/temp")
+    public boolean deleteFile(@RequestParam("fileName")String fileName){
+        return FileUploadUtil.removeDirectory(fileName);
     }
 }

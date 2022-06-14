@@ -2,6 +2,7 @@ package com.example.kpi.socialnetwork.util;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -41,5 +42,20 @@ public class FileUploadUtil {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public static boolean removeDirectory(String path){
+        return removeDirectory(Paths.get(path).toFile());
+    }
+
+    public static boolean removeDirectory(File directoryToBeDeleted)
+    {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                removeDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }
