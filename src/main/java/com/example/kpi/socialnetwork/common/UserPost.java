@@ -19,7 +19,7 @@ public class UserPost {
     private String image;
     private String content;
     private LocalDateTime createdTime;
-    private List<Comment> comments;
+    private List<UserComment> comments;
     private List<Like> likes;
     private User author;
     private boolean isLiked;
@@ -34,10 +34,6 @@ public class UserPost {
         createdTime = post.getCreatedTime();
         content = post.getContent();
         comments = new ArrayList<>();
-        if (post.getComments() != null)
-        {
-            comments.addAll(post.getComments());
-        }
         likes = new ArrayList<>();
         if (post.getLikes() != null)
         {
