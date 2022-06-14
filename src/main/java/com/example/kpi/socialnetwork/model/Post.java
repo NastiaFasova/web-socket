@@ -26,9 +26,9 @@ public class Post {
     private String content;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, fallbackPatterns = { "yyyy-MM-dd HH:mm" })
     private LocalDateTime createdTime;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Like> likes;
 
     @Transient
@@ -40,5 +40,4 @@ public class Post {
         }
         return String.format("user-photos/posts/%d/%s", id, image);
     }
-
 }

@@ -1,6 +1,6 @@
 package com.example.kpi.socialnetwork.controller;
 
-import com.example.kpi.socialnetwork.common.KeyValuePair;
+import com.example.kpi.socialnetwork.common.UserPost;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.repository.UserRepository;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,39 +49,35 @@ public class PostController {
     @GetMapping("/saved")
     public String mySaved(Model model) throws NullPointerException {
         User user = userService.getLoggedInUser();
-        List<Post> posts = postService.getSavedPostsOfUser(user.getEmail());
-        List<User> authors = userService.getAuthors(posts);
-        model.addAttribute("posts", posts);
-        model.addAttribute("authors", authors);
-        model.addAttribute("currentUser", userService.getLoggedInUser());
+        List<UserPost> posts = postService.getSavedPostsOfUser(user.getEmail());
+        model.addAttribute("postsList", posts);
         model.addAttribute("tweet", new Post());
-        model.addAttribute("registeredUsers", userService.findAll());
+        model.addAttribute("registeredUsers", userService.findAllExceptCurrent());
+        model.addAttribute("currentUser", user);
         return "posts";
     }
 
     @GetMapping("/posts")
     public String getAllPosts(Model model){
+        User user = userService.getLoggedInUser();
         model.addAttribute("postsList", postService.getAllPosts());
         model.addAttribute("currentUser", userService.getLoggedInUser());
-        model.addAttribute("registeredUsers", userService.findAll().stream().limit(3).collect(Collectors.toList()));
+        model.addAttribute("registeredUsers", userService.findAllExceptCurrent());
         model.addAttribute("tweet", new Post());
         return "posts";
     }
 
-    @GetMapping("/save/{id}")
-    public String savePost(@PathVariable(value = "id") Long postId, Model model) {
+    @PostMapping("/save/{id}")
+    public boolean savePost(@PathVariable(value = "id") Long postId) {
         User loggedInUser = userService.getLoggedInUser();
-        userService.savePost(loggedInUser, postId);
-        List<Post> posts = postService.getPostsOfUser(loggedInUser.getId());
-        model.addAttribute("posts", posts);
-        return "redirect:/posts";
+        return userService.savePost(loggedInUser, postId) != null;
     }
 
     @GetMapping("/retweet/{id}")
     public String retweetPost(@PathVariable(value = "id") Long postId, Model model) {
         User loggedInUser = userService.getLoggedInUser();
         userService.retweetPost(loggedInUser, postId);
-        List<Post> posts = postService.getPostsOfUser(loggedInUser.getId());
+        List<UserPost> posts = postService.getPostsOfUser(loggedInUser.getId());
         model.addAttribute("posts", posts);
         return "redirect:/posts";
     }
@@ -91,10 +87,34 @@ public class PostController {
         User loggedInUser = userService.getLoggedInUser();
         Post post = loggedInUser.getPosts().stream().filter(p -> p.getId().equals(postId)).findAny().orElseThrow();
         if (post != null) {
-            userService.deletePost(loggedInUser, postId);
-            List<Post> posts = postService.getPostsOfUser(loggedInUser.getId());
-            model.addAttribute("posts", posts);
+            postService.deletePost(postId);
+            List<UserPost> posts = postService.getPostsOfUser(loggedInUser.getId());
+            model.addAttribute("postsList", posts);
             return "redirect:/me";
+        }
+        throw new RuntimeException();
+    }
+
+    @GetMapping("/edit/{id}/dialog")
+    public String editPost(@PathVariable(value = "id") Long postId, Model model) {
+        var post = postService.findById(postId);
+        if (post != null) {
+            model.addAttribute("post", post);
+            return "fragments/post-edit-modal :: post-edit-modal";
+        }
+        throw new RuntimeException();
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editPost(@PathVariable(value = "id") Long postId, @RequestParam("edit-tweet") String content, @RequestParam("tweet-image") MultipartFile file, Model model) {
+        var loggedInUser = userService.getLoggedInUser();
+        var post = postService.editPost(postId, content, file);
+        var userPost = postService.findById(post.getId());
+        if (post != null) {
+            model.addAttribute("post", userPost);
+            model.addAttribute("currentUser", loggedInUser);
+            model.addAttribute("postAuthor", loggedInUser);
+            return "fragments/post :: post";
         }
         throw new RuntimeException();
     }

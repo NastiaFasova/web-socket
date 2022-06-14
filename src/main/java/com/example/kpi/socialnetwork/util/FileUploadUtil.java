@@ -25,4 +25,21 @@ public class FileUploadUtil {
             throw new IOException("Could not save image file: " + fileName, ioe);
         }
     }
+
+    public static String saveTmpFile(Long postId, MultipartFile multipartFile) throws IOException {
+        var path = String.format("user-photos/posts/%d/temp/%s",postId, RandomStringGenerator.generate(7));
+        var fileName = RandomStringGenerator.generate(7);
+
+        saveFile(path, fileName, multipartFile);
+        return Path.of(path, fileName).toString();
+    }
+
+    public static boolean removeFile(String path)
+    {
+        try {
+            return Files.deleteIfExists(Path.of(path));
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

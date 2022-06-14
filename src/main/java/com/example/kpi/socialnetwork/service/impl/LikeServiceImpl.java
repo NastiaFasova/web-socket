@@ -50,8 +50,11 @@ public class LikeServiceImpl implements LikeService {
                 userRepository.save(user);
                 return like;
             }
+
             post.getLikes().remove(likeByUserAndPost);
             postRepository.save(post);
+            user.getLikes().remove(post);
+            userRepository.save(user);
             likeRepository.delete(likeByUserAndPost);
             return null;
         }

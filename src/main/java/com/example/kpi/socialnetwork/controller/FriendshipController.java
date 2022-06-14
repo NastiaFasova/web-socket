@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -33,21 +34,32 @@ public class FriendshipController {
         return "redirect:/followings";
     }
 
-    @GetMapping("/followings")
-    public String myFollowings(Model model) throws NullPointerException {
-        User user = userService.getLoggedInUser();
-        List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
-        model.addAttribute("user", user);
-        model.addAttribute("users", followings);
-        return "users_list";
+    @PostMapping("/follow/{id}")
+    public boolean followUser(@PathVariable Long id) {
+        User loggedInUser = userService.getLoggedInUser();
+        if (id.equals(loggedInUser.getId())) {
+            return false;
+        }
+        return friendshipService.follow(loggedInUser.getId(), id) != null;
     }
 
-    @GetMapping("/followers")
-    public String myFollowers(Model model) throws NullPointerException {
-        User user = userService.getLoggedInUser();
+    @GetMapping("/followings/{id}")
+    public String myFollowings(Model model, @PathVariable Long id) throws NullPointerException {
+        User user = userService.getUserById(id);
+        List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
+        model.addAttribute("users", followings);
+        model.addAttribute("modalId", "followingsId");
+        model.addAttribute("modalTitle", String.format("%s is following", user.getFullName()));
+        return "fragments/followers-modal :: followers-modal";
+    }
+
+    @GetMapping("/followers/{id}")
+    public String myFollowers(Model model, @PathVariable Long id) throws NullPointerException {
+        User user = userService.getUserById(id);
         List<User> followers = friendshipService.getFollowersOfUser(user.getId());
-        model.addAttribute("user", user);
         model.addAttribute("users", followers);
-        return "users_list";
+        model.addAttribute("modalId", "followersId");
+        model.addAttribute("modalTitle", String.format("%s are followed", user.getFullName()));
+        return "fragments/followers-modal :: followers-modal";
     }
 }

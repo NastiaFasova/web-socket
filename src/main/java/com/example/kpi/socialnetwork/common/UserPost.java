@@ -22,6 +22,10 @@ public class UserPost {
     private List<Comment> comments;
     private List<Like> likes;
     private User author;
+    private boolean isLiked;
+    private boolean isRetweeted;
+    private boolean isSaved;
+    private Long savesCount;
 
     public UserPost(User author, Post post) {
         this.author = author;
@@ -29,8 +33,16 @@ public class UserPost {
         image = post.getImage();
         createdTime = post.getCreatedTime();
         content = post.getContent();
-        comments = new ArrayList<>(post.getComments());
-        likes = new ArrayList<>(post.getLikes());
+        comments = new ArrayList<>();
+        if (post.getComments() != null)
+        {
+            comments.addAll(post.getComments());
+        }
+        likes = new ArrayList<>();
+        if (post.getLikes() != null)
+        {
+            likes.addAll(post.getLikes());
+        }
     }
 
     @Transient

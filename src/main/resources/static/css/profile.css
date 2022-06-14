@@ -61,8 +61,10 @@
   height: 30px;
 }
 
-.follow-btn div img {
-  margin-top: 5px;
+.follow-btn img {
+  position: relative;
+  bottom: 6px;
+  filter: invert(98%) sepia(100%) saturate(6%) hue-rotate(132deg) brightness(103%) contrast(103%);
 }
 
 .follow-user-name {

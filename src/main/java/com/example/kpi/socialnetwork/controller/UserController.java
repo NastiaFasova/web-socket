@@ -1,5 +1,6 @@
 package com.example.kpi.socialnetwork.controller;
 
+import com.example.kpi.socialnetwork.common.UserPost;
 import com.example.kpi.socialnetwork.model.Friendship;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
@@ -41,7 +42,7 @@ public class UserController {
     @GetMapping("/me")
     public String myPosts(Model model) throws NullPointerException {
         User user = userService.getLoggedInUser();
-        List<Post> posts = postService.getPostsOfUser(user.getId());
+        List<UserPost> posts = postService.getPostsOfUser(user.getId());
         List<User> followers = friendshipService.getFollowersOfUser(user.getId());
         List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
         model.addAttribute("posts", posts);
@@ -61,7 +62,7 @@ public class UserController {
             return "redirect:/me";
         }
         User user = userService.getUserById(id);
-        List<Post> posts = postService.getPostsOfUser(user.getId());
+        List<UserPost> posts = postService.getPostsOfUser(user.getId());
         List<User> followers = friendshipService.getFollowersOfUser(user.getId());
         List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
         model.addAttribute("posts", posts);
