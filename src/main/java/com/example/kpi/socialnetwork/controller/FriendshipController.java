@@ -1,5 +1,6 @@
 package com.example.kpi.socialnetwork.controller;
 
+import com.example.kpi.socialnetwork.common.UserFollow;
 import com.example.kpi.socialnetwork.model.Friendship;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.service.FriendshipService;
@@ -46,7 +47,7 @@ public class FriendshipController {
     @GetMapping("/followings/{id}")
     public String myFollowings(Model model, @PathVariable Long id) throws NullPointerException {
         User user = userService.getUserById(id);
-        List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
+        List<UserFollow> followings = friendshipService.getFollowingsOfUser(user.getId());
         model.addAttribute("users", followings);
         model.addAttribute("modalId", "followingsId");
         model.addAttribute("modalTitle", String.format("%s is following", user.getFullName()));
@@ -56,7 +57,7 @@ public class FriendshipController {
     @GetMapping("/followers/{id}")
     public String myFollowers(Model model, @PathVariable Long id) throws NullPointerException {
         User user = userService.getUserById(id);
-        List<User> followers = friendshipService.getFollowersOfUser(user.getId());
+        List<UserFollow> followers = friendshipService.getFollowersOfUser(user.getId());
         model.addAttribute("users", followers);
         model.addAttribute("modalId", "followersId");
         model.addAttribute("modalTitle", String.format("%s are followed", user.getFullName()));

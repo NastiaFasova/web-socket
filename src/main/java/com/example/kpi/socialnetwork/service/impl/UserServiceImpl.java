@@ -88,21 +88,4 @@ public class UserServiceImpl implements UserService {
         user.getSaved().add(originalPost);
         return userRepository.save(user);
     }
-
-    @Override
-    public User retweetPost(User user, Long postId) {
-        Post originalPost = postRepository.getById(postId);
-        Post post = user.getPosts().stream().filter(p -> p.getId().equals(postId)).findFirst().orElse(null);
-        if (post == null) {
-            Post newPost = Post.builder()
-                    .createdTime(LocalDateTime.now())
-                    .likes(new ArrayList<>())
-                    .comments(new ArrayList<>())
-                    .content(originalPost.getContent())
-                    .image(originalPost.getImage()).build() ;
-            postRepository.save(newPost);
-            user.getPosts().add(newPost);
-            return userRepository.save(user);
-        } throw new RuntimeException();
-    }
 }

@@ -1,5 +1,6 @@
 package com.example.kpi.socialnetwork.controller;
 
+import com.example.kpi.socialnetwork.common.UserFollow;
 import com.example.kpi.socialnetwork.common.UserPost;
 import com.example.kpi.socialnetwork.model.Friendship;
 import com.example.kpi.socialnetwork.model.Post;
@@ -43,8 +44,8 @@ public class UserController {
     public String myPosts(Model model) throws NullPointerException {
         User user = userService.getLoggedInUser();
         List<UserPost> posts = postService.getPostsOfUser(user.getId());
-        List<User> followers = friendshipService.getFollowersOfUser(user.getId());
-        List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
+        List<UserFollow> followers = friendshipService.getFollowersOfUser(user.getId());
+        List<UserFollow> followings = friendshipService.getFollowingsOfUser(user.getId());
         model.addAttribute("posts", posts);
         model.addAttribute("user", user);
         model.addAttribute("currentUser", user);
@@ -63,8 +64,8 @@ public class UserController {
         }
         User user = userService.getUserById(id);
         List<UserPost> posts = postService.getPostsOfUser(user.getId());
-        List<User> followers = friendshipService.getFollowersOfUser(user.getId());
-        List<User> followings = friendshipService.getFollowingsOfUser(user.getId());
+        List<UserFollow> followers = friendshipService.getFollowersOfUser(user.getId());
+        List<UserFollow> followings = friendshipService.getFollowingsOfUser(user.getId());
         model.addAttribute("posts", posts);
         model.addAttribute("user", user);
         model.addAttribute("currentUser", currentUser);

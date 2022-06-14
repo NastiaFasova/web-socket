@@ -38,6 +38,8 @@ public class User {
     private List<Post> likes;
     @ManyToMany
     private List<Post> saved;
+    @ManyToMany
+    private List<Post> retweeted;
 
     @Transient
     public String getPhotosImagePath() {

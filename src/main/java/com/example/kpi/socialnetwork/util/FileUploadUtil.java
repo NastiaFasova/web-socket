@@ -27,6 +27,16 @@ public class FileUploadUtil {
         }
     }
 
+    public static void copyFile(String source, String destination) throws IOException {
+        Path sourcePath = Paths.get(source);
+        Path destinationPath = Paths.get(destination);
+
+        if (!Files.exists(destinationPath)) {
+            Files.createDirectories(destinationPath);
+        }
+        Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+    }
+
     public static String saveTmpFile(Long postId, MultipartFile multipartFile) throws IOException {
         var path = String.format("user-photos/posts/%d/temp/%s",postId, RandomStringGenerator.generate(7));
         var fileName = RandomStringGenerator.generate(7);

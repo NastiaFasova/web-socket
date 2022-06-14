@@ -26,4 +26,6 @@ public interface PostService {
     boolean deletePost(Long postId);
 
     Post editPost(long postId, String newContent, MultipartFile file);
+
+    boolean retweetPost(User user, Long postId) throws IOException;
 }

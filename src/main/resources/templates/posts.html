@@ -67,28 +67,29 @@
                 <hr>
                 <div class="d-flex flex-column follow-user" th:each="user : ${registeredUsers}">
                     <div class="d-flex justify-content-between">
-                        <a th:href="@{/user/{id}(id=${user.id})}">
-                            <img th:src="@{${user.avatarImagePath}}" alt="" width="40px" height="40px">
+                        <a th:href="@{/user/{id}(id=${user.user.id})}">
+                            <img th:src="@{${user.user.avatarImagePath}}" alt="" width="40px" height="40px">
                         </a>
                         <div class="d-flex flex-column">
-                            <a th:href="@{/user/{id}(id=${user.id})}">
-                                <h6 class="follow-user-name" th:text="${user.fullName}"></h6>
+                            <a th:href="@{/user/{id}(id=${user.user.id})}">
+                                <h6 class="follow-user-name" th:text="${user.user.fullName}"></h6>
                             </a>
-                            <span class="user-followers">230k followers</span>
+                            <span class="user-followers" th:text="${user.followersCount} + ' followers'"></span>
                         </div>
                         <div class="d-flex flex-column justify-content-center">
-                            <a th:href="@{/follow/{id}(id=${user.id})}">
-                                <button class="follow-btn d-flex justify-content-center" th:attr="data-user-id=${user.id}">
-                                    <img src="/img/follow.svg" alt="" width="36px" height="36px">
-                                    <span class="d-inline-flex flex-column justify-content-center">Follow</span>
-                                </button>
-                            </a>
+                            <button class="follow-btn d-flex justify-content-center" th:if="${user.isFollowed}">
+                                <span class="d-inline-flex flex-column justify-content-center">Followed</span>
+                            </button>
+                            <button class="follow-btn d-flex justify-content-center" th:attr="data-user-id=${user.user.id}" th:unless="${user.isFollowed}">
+                                <img src="/img/follow.svg" alt="" width="36px" height="36px">
+                                <span class="d-inline-flex flex-column justify-content-center">Follow</span>
+                            </button>
                         </div>
                     </div>
                     <div class="follow-desc">
-                        <span th:text="${user.description}"></span>
+                        <span th:text="${user.user.description}"></span>
                     </div>
-                    <div th:unless="${#strings.isEmpty(user.photosImagePath)}" class="follow-user-bg" th:style="'background-image: url('+@{${user.photosImagePath}}+');'"></div>
+                    <div th:unless="${#strings.isEmpty(user.user.photosImagePath)}" class="follow-user-bg" th:style="'background-image: url('+@{${user.user.photosImagePath}}+');'"></div>
                     <hr>
                 </div>
             </div>
@@ -101,6 +102,7 @@
     <script src="/js/follow.js"></script>
     <script src="/js/saveTweet.js"></script>
     <script src="/js/modals.js"></script>
+    <script src="/js/retweet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>

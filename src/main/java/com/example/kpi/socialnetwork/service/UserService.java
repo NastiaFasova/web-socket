@@ -21,6 +21,4 @@ public interface UserService {
     List<User> findAllExceptCurrent();
 
     User savePost(User user, Long postId);
-
-    User retweetPost(User loggedInUser, Long postId);
 }

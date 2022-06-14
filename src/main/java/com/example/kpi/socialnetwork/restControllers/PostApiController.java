@@ -7,6 +7,8 @@ import com.example.kpi.socialnetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("api/posts")
 public class PostApiController {
@@ -34,6 +36,19 @@ public class PostApiController {
             return postService.deletePost(postId);
         }
         catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    @PostMapping("retweet/{id}")
+    public boolean retweet(@PathVariable(value = "id") Long postId)
+    {
+        try
+        {
+            return postService.retweetPost(userService.getLoggedInUser(), postId);
+        }
+        catch (IOException ex)
         {
             return false;
         }

@@ -25,22 +25,26 @@ window.addEventListener("load", function (e){
         });
     }
 
-    document.querySelector('.posts-container').addEventListener('click', function (e){
-        let btn = e.target.localName == 'a'
-            ? e.target
-            : e.target.parentElement;
-        if (btn.dataset.postId)
-        {
-            if (btn.classList.contains('post-edit-btn'))
+    let posts = document.querySelector('.posts-container');
+    if (posts)
+    {
+        posts.addEventListener('click', function (e){
+            let btn = e.target.localName == 'a'
+                ? e.target
+                : e.target.parentElement;
+            if (btn.dataset.postId)
             {
-                editPost(btn, e);
+                if (btn.classList.contains('post-edit-btn'))
+                {
+                    editPost(btn, e);
+                }
+                else if (btn.classList.contains('post-delete-btn'))
+                {
+                    deletePost(btn, e);
+                }
             }
-            else if (btn.classList.contains('post-delete-btn'))
-            {
-                deletePost(btn, e);
-            }
-        }
-    });
+        });
+    }
 });
 
 function showModal(modalUrl, updModal) {

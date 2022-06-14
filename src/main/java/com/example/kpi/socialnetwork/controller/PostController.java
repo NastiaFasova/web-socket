@@ -4,6 +4,7 @@ import com.example.kpi.socialnetwork.common.UserPost;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.repository.UserRepository;
+import com.example.kpi.socialnetwork.service.FriendshipService;
 import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,21 +14,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class PostController {
     private final PostService postService;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final FriendshipService friendshipService;
 
     @Autowired
-    public PostController(PostService postService, UserService userService, UserRepository userRepository) {
+    public PostController(PostService postService, UserService userService, UserRepository userRepository, FriendshipService friendshipService) {
         this.postService = postService;
         this.userService = userService;
         this.userRepository = userRepository;
+        this.friendshipService = friendshipService;
     }
 
     @PostMapping("/tweet")
@@ -52,7 +53,7 @@ public class PostController {
         List<UserPost> posts = postService.getSavedPostsOfUser(user.getEmail());
         model.addAttribute("postsList", posts);
         model.addAttribute("tweet", new Post());
-        model.addAttribute("registeredUsers", userService.findAllExceptCurrent());
+        model.addAttribute("registeredUsers", friendshipService.getUsersToFollow());
         model.addAttribute("currentUser", user);
         return "posts";
     }
@@ -62,7 +63,7 @@ public class PostController {
         User user = userService.getLoggedInUser();
         model.addAttribute("postsList", postService.getAllPosts());
         model.addAttribute("currentUser", userService.getLoggedInUser());
-        model.addAttribute("registeredUsers", userService.findAllExceptCurrent());
+        model.addAttribute("registeredUsers", friendshipService.getUsersToFollow());
         model.addAttribute("tweet", new Post());
         return "posts";
     }
@@ -74,9 +75,9 @@ public class PostController {
     }
 
     @GetMapping("/retweet/{id}")
-    public String retweetPost(@PathVariable(value = "id") Long postId, Model model) {
+    public String retweetPost(@PathVariable(value = "id") Long postId, Model model) throws IOException {
         User loggedInUser = userService.getLoggedInUser();
-        userService.retweetPost(loggedInUser, postId);
+        postService.retweetPost(loggedInUser, postId);
         List<UserPost> posts = postService.getPostsOfUser(loggedInUser.getId());
         model.addAttribute("posts", posts);
         return "redirect:/posts";

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -122,7 +124,7 @@ public class PostServiceImpl implements PostService {
         }
 
         post.setContent(newContent);
-        if (!file.getOriginalFilename().isEmpty() && post.getImage() != file.getOriginalFilename())
+        if (file.getOriginalFilename() != null && !file.getOriginalFilename().isEmpty() && !post.getImage().equals(file.getOriginalFilename()))
         {
             try
             {
@@ -135,6 +137,38 @@ public class PostServiceImpl implements PostService {
             post.setImage(file.getOriginalFilename());
         }
         return postRepository.save(post);
+    }
+
+    @Override
+    public boolean retweetPost(User user, Long postId) throws IOException {
+        Post originalPost = postRepository.getById(postId);
+        Post post = user.getPosts().stream().filter(p -> p.getId().equals(postId)).findFirst().orElse(null);
+        if (post == null) {
+            Post newPost = Post.builder()
+                    .createdTime(LocalDateTime.now())
+                    .likes(new ArrayList<>())
+                    .comments(new ArrayList<>())
+                    .content(originalPost.getContent())
+                    .image(originalPost.getImage()).build();
+            newPost = postRepository.save(newPost);
+            if (newPost.getImage() != null && !newPost.getImage().isEmpty())
+            {
+                try {
+                    FileUploadUtil.copyFile(originalPost.getImagePath(), newPost.getImagePath());
+                }
+                catch (IOException ex)
+                {
+                    postRepository.deleteById(newPost.getId());
+                    return false;
+                }
+            }
+
+            user.getPosts().add(newPost);
+            user.getRetweeted().add(originalPost);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
     private void deletePost(List<Post> posts, Long postId){
@@ -175,6 +209,7 @@ public class PostServiceImpl implements PostService {
                 userPost.setComments(comments.stream().sorted((l, r) -> r.getLocalDateTime().compareTo(l.getLocalDateTime())).collect(Collectors.toList()));
                 userPost.setLiked(userPost.getLikes().stream().anyMatch(like -> like.getUser().getId().equals(currentUser.getId())));
                 userPost.setSaved(currentUser.getSaved().stream().anyMatch(p -> p.getId().equals(userPost.getId())));
+                userPost.setRetweeted(currentUser.getRetweeted().stream().anyMatch(p -> p.getId().equals(userPost.getId())));
                 userPost.setSavesCount(savesCount);
                 postsList.add(userPost);
             }

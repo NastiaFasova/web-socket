@@ -1,7 +1,7 @@
 <div class="post" th:classappend="'post-'+${post.id}" th:fragment="post">
     <div class="post-container">
         <div class="post-author d-flex">
-            <div class="post-autor-avatar">
+            <div class="post-author-avatar">
                 <img th:src="@{${postAuthor.avatarImagePath}}" alt="" width="40px" height="40px">
             </div>
             <div class="d-flex flex-column">
@@ -49,12 +49,14 @@
                 <img src="/img/comment.svg" alt="" width="20px" height="20px">
                 <span th:class="'comments-counter-'+${post.id}" th:text="${post.getComments().size()} + ' Comments'"></span>
             </button>
-            <a th:href="@{/retweet/{id}(id=${post.id})}">
-                <button class="post-button retweet-btn">
-                    <img src="/img/refresh.svg" alt="" width="32px" height="32px">
-                    <span>Retweet</span>
-                </button>
-            </a>
+            <button class="post-button retweet-btn" th:classappend="${post.isRetweeted} ? 'active' : ''" th:if="${postAuthor.id == currentUser.id}">
+                <img src="/img/refresh.svg" alt="" width="32px" height="32px">
+                <span th:text="${post.isRetweeted} ? 'Retweeted' : 'Retweet'"></span>
+            </button>
+            <button class="post-button retweet-btn" th:classappend="${post.isRetweeted} ? 'active' : ''" th:unless="${postAuthor.id == currentUser.id}" th:attr="data-post-id=${post.id}">
+                <img src="/img/refresh.svg" alt="" width="32px" height="32px">
+                <span th:text="${post.isRetweeted} ? 'Retweeted' : 'Retweet'"></span>
+            </button>
             <button class="post-button like-btn" th:attr="data-post-id=${post.id}" th:classappend="${post.isLiked} ? 'active' : ''">
                 <img src="/img/like.svg" alt="" width="32px" height="32px">
                 <span th:text="${post.isLiked} ? 'Liked' : 'Like'"></span>
