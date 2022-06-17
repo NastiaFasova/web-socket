@@ -47,7 +47,7 @@ public class UserController {
         List<UserFollow> followers = friendshipService.getFollowersOfUser(user.getId());
         List<UserFollow> followings = friendshipService.getFollowingsOfUser(user.getId());
         model.addAttribute("posts", posts);
-        model.addAttribute("user", user);
+        model.addAttribute("user", new UserFollow(user, followings.stream().anyMatch(u -> u.getUser().getId().equals(user.getId())), followings.size()));
         model.addAttribute("currentUser", user);
         model.addAttribute("followers", followers);
         model.addAttribute("followings", followings);
@@ -67,7 +67,7 @@ public class UserController {
         List<UserFollow> followers = friendshipService.getFollowersOfUser(user.getId());
         List<UserFollow> followings = friendshipService.getFollowingsOfUser(user.getId());
         model.addAttribute("posts", posts);
-        model.addAttribute("user", user);
+        model.addAttribute("user", new UserFollow(user, followings.stream().anyMatch(u -> u.getUser().getId().equals(user.getId())), followings.size()));
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("followers", followers);
         model.addAttribute("followings", followings);
@@ -99,19 +99,34 @@ public class UserController {
     @PostMapping("/edit")
     public String editProfile(@Valid @ModelAttribute("formData") UserUpdateDto userUpdateDto,
                               BindingResult bindingResult,
-                              @RequestParam("fileImage") MultipartFile avatar) throws IOException {
+                              @RequestParam("user-avatar") MultipartFile avatar,
+                              @RequestParam("bg") MultipartFile panorama) throws IOException {
         if (bindingResult != null && bindingResult.hasErrors()) {
             return "redirect:/edit";
         }
-        if (avatar.getOriginalFilename() == null || avatar.getOriginalFilename().isEmpty()) {
-            userService.save(userUpdateMapper.getUser(userUpdateDto));
-            return "redirect:/me";
+        var user = userService.getLoggedInUser();
+        if (avatar.getOriginalFilename() != null && !avatar.getOriginalFilename().isEmpty())
+        {
+            String avatarFileName = StringUtils.cleanPath(avatar.getOriginalFilename());
+            userUpdateDto.setAvatar(avatarFileName);
+            FileUploadUtil.saveFile("user-photos/avatar/" + user.getId(), avatarFileName, avatar);
         }
-        String fileName = StringUtils.cleanPath(avatar.getOriginalFilename());
-        userUpdateDto.setAvatar(fileName);
-        User registeredUser = userService.save(userUpdateMapper.getUser(userUpdateDto));
-        String uploadDir = "user-photos/avatar/" + registeredUser.getId();
-        FileUploadUtil.saveFile(uploadDir, fileName, avatar);
+        else
+        {
+            userUpdateDto.setAvatar(user.getAvatar());
+        }
+        if (panorama.getOriginalFilename() != null && !panorama.getOriginalFilename().isEmpty())
+        {
+            String panoramaFileName = StringUtils.cleanPath(panorama.getOriginalFilename());
+            userUpdateDto.setBackground(panoramaFileName);
+            FileUploadUtil.saveFile("user-photos/panorama/" + user.getId(), panoramaFileName, panorama);
+        }
+        else
+        {
+            userUpdateDto.setBackground(user.getBackground());
+        }
+        User registeredUser = userService.save(userUpdateMapper.getUser(userUpdateDto, user));
+
         return "redirect:/me";
     }
 }

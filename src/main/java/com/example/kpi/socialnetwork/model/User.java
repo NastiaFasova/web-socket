@@ -46,7 +46,7 @@ public class User {
         if (background == null || id == null) {
             return "";
         }
-        return "/user-photos/" + id + "/" + background;
+        return "~/user-photos/panorama/" + id + "/" + background;
     }
 
     @Transient
@@ -54,6 +54,6 @@ public class User {
         if (avatar == null || id == null) {
             return "";
         }
-        return "/user-photos/avatar/" + id + "/" + avatar;
+        return "~/user-photos/avatar/" + id + "/" + avatar;
     }
 }

@@ -38,6 +38,6 @@ public class Post {
         {
             return "";
         }
-        return String.format("user-photos/posts/%d/%s", id, image);
+        return String.format("~/user-photos/posts/%d/%s", id, image);
     }
 }

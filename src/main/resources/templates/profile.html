@@ -18,27 +18,27 @@
         <header th:replace="fragments/header :: header('true', 'true', 'true')"></header>
       </div>
       <!-- Panorama -->
-      <div id="panorama" th:style="'background-image:url(' + ${user.photosImagePath} + ');'"></div>
+      <div id="panorama" th:style="'background-image:url(' + @{${user.user.photosImagePath}} + ');'"></div>
         <main>
           <div class="container position-relative">
             <div class="white-bg half-panel"></div>
             <div class="profile-image-container d-none d-flex-1000 justify-content-center">
               <div class="profile-image">
-                <img th:src="@{${user.avatarImagePath}}" alt="">
+                <img th:src="@{${user.user.avatarImagePath}}" alt="">
               </div>
             </div>
           </div>
           <div class="container profile-info d-flex">
               <div class="profile-image-container d-none-1000">
                 <div class="profile-image">
-                  <img th:src="@{${user.avatarImagePath}}" alt="">
+                  <img th:src="@{${user.user.avatarImagePath}}" alt="">
                 </div>
               </div>
 
               <div class="d-flex flex-column followers-info">
                 <div class="d-flex justify-content-between followers-info-container">
                   <div class="d-flex justify-content-around followers-info-container" style="width: 60%;">
-                    <h5 class="poppins-600" th:text="${user.fullName}"></h5>
+                    <h5 class="poppins-600" th:text="${user.user.fullName}"></h5>
 
                     <div class="d-flex justify-content-around follower-counters">
                       <p class="poppins-500 gray light" th:text="${followers.size()} + ' Followers'"></p>
@@ -46,22 +46,28 @@
                     </div>
                   </div>
 
-                  <button th:unless="${isCurrentUser}" th:href="@{/follow/{id}(id=${user.id})}" type="submit" class="follow-btn follow-btn-lg">
-                    <div>
-                      <img src="/img/follow.svg" alt="" width="48px" height="48px">
-                      <span>Follow</span>
-                    </div>
+                  <button th:unless="${isCurrentUser or user.isFollowed}" class="follow-btn follow-btn-lg" th:attr="data-user-id=${user.user.id}">
+                    <img src="/img/follow.svg" alt="" width="48px" height="48px">
+                    <span>Follow</span>
+                  </button>
+                  <button th:if="${!isCurrentUser and user.isFollowed}" class="follow-btn follow-btn-lg">
+                    <span>Followed</span>
                   </button>
 
                 </div>
                 <div class="profile-desc">
-                  <span class="light" th:text="${user.description}"></span>
+                  <span class="light" th:text="${user.user.description}"></span>
                 </div>
 
-                <button th:unless="${isCurrentUser}" type="submit" class="d-none follow-btn follow-btn-sm" th:href="@{/follow/{id}(id=${user.id})}">
+                <button th:unless="${isCurrentUser or user.isFollowed}" type="submit" class="d-none follow-btn follow-btn-sm" th:attr="data-user-id=${user.user.id}">
                   <div>
                     <img src="/img/follow.svg" alt="" width="48px" height="48px">
                     <span>Follow</span>
+                  </div>
+                </button>
+                <button th:if="${!isCurrentUser and user.isFollowed}" type="submit" class="d-none follow-btn follow-btn-sm">
+                  <div>
+                    <span>Followed</span>
                   </div>
                 </button>
               </div>
@@ -71,10 +77,10 @@
               <div class="d-flex side-nav">
                 <ul class="nav flex-column">
                   <li class="nav-item">
-                    <a role="button" class="nav-link user-followers-btn" th:attr="data-user-id=${user.id}" th:href="@{/followers}">Followers</a>
+                    <a role="button" class="nav-link user-followers-btn" th:attr="data-user-id=${user.user.id}" th:href="@{/followers}">Followers</a>
                   </li>
                   <li class="nav-item">
-                    <a role="button" class="nav-link user-followings-btn" th:attr="data-user-id=${user.id}" th:href="@{/followings}">Followings</a>
+                    <a role="button" class="nav-link user-followings-btn" th:attr="data-user-id=${user.user.id}" th:href="@{/followings}">Followings</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" th:href="@{/likes}">Likes</a>
@@ -85,9 +91,12 @@
                 </ul>
               </div>
 
-              <div class="d-flex flex-column posts-container" th:with="postAuthor = ${user}" th:insert="fragments/posts :: posts"></div>
+              <div class="d-flex flex-column posts-container" th:with="postAuthor = ${user.user}" th:insert="fragments/posts :: posts"></div>
             </div>
         </main>
+      <footer class="d-flex justify-content-center mt-auto mb-2">
+        <span>&copy; Created by Yarmacho </span>
+      </footer>
         <script src="/js/likes.js"></script>
         <script src="/js/comment.js"></script>
         <script src="/js/modals.js"></script>

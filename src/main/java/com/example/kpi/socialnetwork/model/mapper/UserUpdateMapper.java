@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 public class UserUpdateMapper {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public User getUser(UserUpdateDto userUpdateDto) {
+    public User getUser(UserUpdateDto userUpdateDto, User loggedInUser) {
         User user = new User();
         user.setEmail(userUpdateDto.getEmail());
         user.setId(userUpdateDto.getId());
@@ -20,7 +20,14 @@ public class UserUpdateMapper {
         user.setBackground(userUpdateDto.getBackground());
         user.setPhone(userUpdateDto.getPhone());
         user.setAddress(userUpdateDto.getAddress());
-        user.setDateOfBirth(LocalDate.parse(userUpdateDto.getDateOfBirth(), formatter));
+        if (userUpdateDto.getDateOfBirth() != null && !userUpdateDto.getDateOfBirth().isEmpty())
+        {
+            user.setDateOfBirth(LocalDate.parse(userUpdateDto.getDateOfBirth(), formatter));
+        }
+        user.setPosts(loggedInUser.getPosts());
+        user.setSaved(loggedInUser.getSaved());
+        user.setLikes(loggedInUser.getLikes());
+        user.setRetweeted(loggedInUser.getRetweeted());
         return user;
     }
 

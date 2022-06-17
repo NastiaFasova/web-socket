@@ -140,7 +140,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public boolean retweetPost(User user, Long postId) throws IOException {
+    public boolean retweetPost(User user, Long postId) {
         Post originalPost = postRepository.getById(postId);
         Post post = user.getPosts().stream().filter(p -> p.getId().equals(postId)).findFirst().orElse(null);
         if (post == null) {

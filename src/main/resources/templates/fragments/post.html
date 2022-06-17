@@ -35,7 +35,7 @@
         </div>
 
         <div class="post-thumbnail" th:if="${not #strings.isEmpty(post.imagePath)}">
-            <img th:class="'post-'+${post.id}+'thumb'" th:src="@{${post.imagePath}}" alt="">
+            <img th:class="'post-'+${post.id}+'-thumb'" th:src="@{${post.imagePath}}" alt="">
         </div>
 
         <div class="post-rate d-flex justify-content-end">

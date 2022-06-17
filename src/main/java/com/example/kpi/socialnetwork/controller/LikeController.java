@@ -2,7 +2,7 @@ package com.example.kpi.socialnetwork.controller;
 
 import com.example.kpi.socialnetwork.common.UserPost;
 import com.example.kpi.socialnetwork.model.Post;
-import com.example.kpi.socialnetwork.model.User;
+import com.example.kpi.socialnetwork.service.FriendshipService;
 import com.example.kpi.socialnetwork.service.LikeService;
 import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.UserService;
@@ -21,13 +21,15 @@ public class LikeController {
     private final LikeService likeService;
     private final UserService userService;
     private final PostService postService;
+    private final FriendshipService friendshipService;
 
     @Autowired
     public LikeController(LikeService likeService, UserService userService,
-                          PostService postService) {
+                          PostService postService, FriendshipService friendshipService) {
         this.likeService = likeService;
         this.userService = userService;
         this.postService = postService;
+        this.friendshipService = friendshipService;
     }
 
     @GetMapping("/comment/{id}")
@@ -54,7 +56,7 @@ public class LikeController {
         model.addAttribute("postsList", likes);
         model.addAttribute("user", user);
         model.addAttribute("currentUser", user);
-        model.addAttribute("registeredUsers", userService.findAllExceptCurrent());
+        model.addAttribute("registeredUsers", friendshipService.getUsersToFollow());
         model.addAttribute("tweet", new Post());
         return "posts";
     }

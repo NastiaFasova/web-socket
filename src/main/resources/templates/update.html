@@ -16,10 +16,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 <div class="header fixed-top">
-    <header class="container-fluid">
-        <img class="d-none d-lg-block" src="/img/tweeter.svg" alt="logo">
-        <img class="d-block d-lg-none" src="/img/tweeter-small.svg" alt="logo">
-    </header>
+    <header th:replace="fragments/header :: header('false', 'false', 'false')"></header>
 </div>
 <section class="d-flex flex-column justify-content-center min-vh-90">
     <div class="container-fluid ps-md-0">
@@ -47,6 +44,7 @@
                                     <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"
                                           class="form-control form-control-user alert alert-danger" style="margin-top: 25px"></span>
                                 </div>
+                                <input type="email" th:field="*{email}" hidden>
                                 <div class="form-floating mb-3">
                                     <input name = "login" class="form-control" id="floatingEmail"
                                            th:field="*{address}">
@@ -60,13 +58,22 @@
 										<span class="input-group-addon">
 											<span class="glyphicon glyphicon-calendar"></span>
 										</span>
-                                            <input type="date" class="form-control"  th:field="*{dateOfBirth}" required="true"/>
+                                            <input type="date" class="form-control"  th:field="*{dateOfBirth}"/>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="form-floating mb-3">
-                                    <input type="file" name="fileImage" accept="image/png, image/jpeg" />
+                                <div class="mb-3 d-flex flex-column">
+                                    <label for="new-avatar">
+                                        <span>Select you avatar</span>
+                                        <img src="/img/image.svg" alt="" width="24px" height="24px">
+                                        <input type="file" id="new-avatar" name="user-avatar" accept="image/png, image/jpeg" hidden/>
+                                    </label>
+                                    <label for="new-background">
+                                        <span>Select you background image</span>
+                                        <img src="/img/image.svg" alt="" width="24px" height="24px">
+                                        <input type="file" id="new-background" name="bg" accept="image/png, image/jpeg" hidden/>
+                                    </label>
                                 </div>
 
                                 <div class="d-grid">

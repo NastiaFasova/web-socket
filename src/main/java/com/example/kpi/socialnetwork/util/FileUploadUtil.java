@@ -13,6 +13,7 @@ import java.nio.file.StandardCopyOption;
 public class FileUploadUtil {
     public static void saveFile(String uploadDir, String fileName,
                                 MultipartFile multipartFile) throws IOException {
+        uploadDir = trim(uploadDir);
         Path uploadPath = Paths.get(uploadDir);
 
         if (!Files.exists(uploadPath)) {
@@ -28,8 +29,8 @@ public class FileUploadUtil {
     }
 
     public static void copyFile(String source, String destination) throws IOException {
-        Path sourcePath = Paths.get(source);
-        Path destinationPath = Paths.get(destination);
+        Path sourcePath = Paths.get(trim(source));
+        Path destinationPath = Paths.get(trim(destination));
 
         if (!Files.exists(destinationPath)) {
             Files.createDirectories(destinationPath);
@@ -67,5 +68,14 @@ public class FileUploadUtil {
             }
         }
         return directoryToBeDeleted.delete();
+    }
+
+    private static String trim(String path)
+    {
+        if (path.startsWith("~/"))
+        {
+            path = path.substring(2);
+        }
+        return path;
     }
 }
