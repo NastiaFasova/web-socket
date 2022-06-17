@@ -3,11 +3,14 @@ package com.example.kpi.socialnetwork.controller;
 import com.example.kpi.socialnetwork.common.UserPost;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.User;
+import com.example.kpi.socialnetwork.model.dto.PostDto;
 import com.example.kpi.socialnetwork.repository.UserRepository;
 import com.example.kpi.socialnetwork.service.FriendshipService;
 import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +42,8 @@ public class PostController {
     }
 
     @PutMapping("/tweet/create")
-    public String createPost(Model model, @RequestParam("tweet-image")MultipartFile postImage, @RequestParam("content") String content) throws NullPointerException, IOException {
+    public String createPost(Model model, @RequestParam("tweet-image")MultipartFile postImage,
+                             @RequestParam("content") String content) throws NullPointerException, IOException {
         var post = postService.createPost(content, postImage);
         model.addAttribute("post", post);
         model.addAttribute("postAuthor", post.getAuthor());
@@ -118,5 +122,11 @@ public class PostController {
             return "fragments/post :: post";
         }
         throw new RuntimeException();
+    }
+
+    @MessageMapping("/posts")
+    @SendTo("/topic/posts")
+    public UserPost send(PostDto postDto) throws IOException {
+        return postService.findById(postDto.getId());
     }
 }

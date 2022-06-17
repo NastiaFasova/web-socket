@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/profile.css">
 </head>
-<body>
+<body onload="connect()">
     <div class="header fixed-top">
       <header th:replace="fragments/header :: header('true', 'true', 'false')"></header>
     </div>
@@ -29,7 +29,7 @@
                       <div class="d-flex justify-content-start">
                           <img th:src="@{${currentUser.avatarImagePath}}" alt="" width="40px" height="40px">
                       </div>
-                      <textarea th:field="*{content}" name="tweet" id="" rows="3"
+                      <textarea th:field="*{content}" name="tweet" id="content" rows="3"
                                 placeholder="What`s happening?" class="form-control"></textarea>
                   </div>
 
@@ -38,7 +38,7 @@
                           <img src="/img/image.svg" alt="" width="24px" height="24px">
                           <input type="file" name="tweet-image" id="new-tweet-image" hidden>
                       </label>
-                      <input type="submit" class="tweet-btn" value="Tweet">
+                      <input onclick="sendPost()" type="submit" class="tweet-btn" value="Tweet">
                   </div>
               </div>
           </form>
@@ -106,6 +106,48 @@
     <script src="/js/modals.js"></script>
     <script src="/js/retweet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="/js/sockjs.js"></script>
+    <script src="/js/stomp.js"></script>
+    <script type="text/javascript">
+        var stompClient = null;
 
+        function connect() {
+            var socket = new SockJS('/posts');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function(frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/posts', function(postOutput) {
+                    showPost(JSON.parse(postOutput.body));
+                    let posts = document.querySelector('.posts-container');
+                    if (posts) {
+                        var parsedJSON = JSON.parse(postOutput.body);
+                    }
+                });
+            });
+        }
+
+        function disconnect() {
+            if(stompClient != null) {
+                stompClient.disconnect();
+            }
+            console.log("Disconnected");
+        }
+
+        function sendPost() {
+            var content = document.getElementById('content').value;
+            var image = document.getElementById('new-tweet-image').value;
+            stompClient.send("/app/posts", {},
+                JSON.stringify({'content':content, 'image':image}));
+        }
+
+        function showPost(messageOutput) {
+            var response = document.getElementById('response');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.appendChild(document.createTextNode(messageOutput.from + ": "
+                + messageOutput.text + " (" + messageOutput.time + ")"));
+            response.appendChild(p);
+        }
+    </script>
 </body>
 </html>

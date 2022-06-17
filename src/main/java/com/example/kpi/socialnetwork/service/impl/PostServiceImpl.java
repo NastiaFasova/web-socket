@@ -64,8 +64,7 @@ public class PostServiceImpl implements PostService {
         user.getPosts().add(newPost);
         user = userRepository.save(user);
 
-        if (newPost.getImage() != null && !newPost.getImage().isEmpty())
-        {
+        if (newPost.getImage() != null && !newPost.getImage().isEmpty()) {
             FileUploadUtil.saveFile(String.format("user-photos/posts/%d/", newPost.getId()), newPost.getImage(),file);
         }
 
