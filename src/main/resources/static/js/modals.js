@@ -36,11 +36,16 @@ window.addEventListener("load", function (e){
             {
                 if (btn.classList.contains('post-edit-btn'))
                 {
-                    editPost(btn, e);
+                    editPostModal(btn, e);
                 }
                 else if (btn.classList.contains('post-delete-btn'))
                 {
-                    deletePost(btn, e);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.stompClient != null)
+                    {
+                        window.stompClient.send('/app/tweets/delete', {}, btn.dataset.postId);
+                    }
                 }
             }
         });
@@ -76,30 +81,7 @@ function showModal(modalUrl, updModal) {
     });
 }
 
-function deletePost(btn, e){
-    if (e)
-    {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-    fetch(`${location.origin}/${btn.dataset.postId}`, {
-        method: 'DELETE'
-    })
-    .then(response => {
-        if (response.ok)
-        {
-            return response.text();
-        }
-    })
-    .then(isDeleted => {
-        if (isDeleted == 'true')
-        {
-            document.querySelector(`.post-${btn.dataset.postId}`).remove();
-        }
-    });
-}
-
-function editPost(btn, e)
+function editPostModal(btn, e)
 {
     if (e)
     {
@@ -113,33 +95,33 @@ function editPost(btn, e)
             {
                 e.stopPropagation();
                 e.preventDefault();
-
                 let form = document.querySelector('.edit-post-form');
                 fetch(`${location.origin}/edit/${btn.dataset.postId}`, {
                     method: 'POST',
                     body: new FormData(form)
                 })
-                .then(response => {
-                    if (response.ok)
-                    {
-                        return response.text();
+                .then(resp =>
+                {
+                    window.stompClient.send('/app/tweets/edit', {}, JSON.stringify({
+                        id: btn.dataset.postId,
+                        content: form.elements['edit-tweet'].value,
+                        image: form.elements['tweet-image'] && form.elements['tweet-image'].value != ''
+                            ? form.elements['tweet-image'].value.substr(form.elements['tweet-image'].value.lastIndexOf('\\') + 1)
+                            : ''
+                    }));
+                }
+                ).then(s => {
+                        if (form.elements['tweet-image'] && form.elements['tweet-image'].value != '')
+                        {
+                            let postThumb = document.querySelector(`.post-${btn.dataset.postId}-thumb`);
+                            if (postThumb && postThumb.classList.contains('d-none'))
+                            {
+                                postThumb.classList.toggle('d-none');
+                            }
+                        }
                     }
-                })
-                .then(html =>{
-                    let post = document.createElement('div');
-                    post.innerHTML =  html;
-                    document.querySelector(`.post-${btn.dataset.postId}`).innerHTML = post.firstChild.innerHTML;
-                    bootstrap.Modal.getInstance(modal).hide();
-                })
-                .then(t => {
-                    let fileName = `user-photos/posts/${btn.dataset.postId}/temp`;
-                    let data = new FormData();
-                    data.append('fileName', fileName);
-                    fetch(`${location.origin}/api/files/temp`,{
-                        method: "DELETE",
-                        body: data
-                    });
-                });
+                );
+
             }
         });
 
@@ -163,6 +145,10 @@ function editPost(btn, e)
                     if (postImg)
                     {
                         postImg.src = img;
+                        if (postImg.parentElement && postImg.parentElement.classList.contains('d-none'))
+                        {
+                            postImg.parentElement.classList.toggle('d-none');
+                        }
                     }
                 });
             }

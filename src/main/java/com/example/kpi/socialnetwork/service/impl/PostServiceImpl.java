@@ -11,14 +11,15 @@ import com.example.kpi.socialnetwork.service.UserService;
 import com.example.kpi.socialnetwork.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,9 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     @Autowired
     public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, UserService userService) {
@@ -84,10 +88,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public UserPost findById(Long postId) {
-        var post = postRepository.findById(postId).orElseThrow();
+        return findById(postId, userService.getLoggedInUser());
+    }
+
+    @Override
+    public UserPost findById(Long postId, User currentUser) {
+        var post = postRepository.findByIdFetchComments(postId).orElseThrow();
         var posts = new ArrayList<Post>();
         posts.add(post);
-        var res = convert(posts);
+        var res = convert(posts, currentUser);
         return res.get(0);
     }
 
@@ -106,10 +115,44 @@ public class PostServiceImpl implements PostService {
     @Override
     public boolean deletePost(Long postId) {
         var user = userService.getLoggedInUser();
-        deletePost(user.getLikes(), postId);
-        deletePost(user.getPosts(), postId);
-        deletePost(user.getSaved(), postId);
-        userRepository.save(user);
+        return deletePost(postId, user);
+    }
+
+    @Override
+    public boolean deletePost(Long postId, String email) {
+        var user = userRepository.findByEmail(email);
+        return deletePost(postId, user);
+    }
+
+    @Transactional
+    @javax.transaction.Transactional
+    private boolean deletePost(Long postId, User user)
+    {
+        var manager = entityManagerFactory.createEntityManager();
+        var transaction = manager.getTransaction();
+        try {
+            transaction.begin();
+            manager.createNativeQuery("DELETE FROM users_likes l where l.likes_id =:postId and l.user_id=:userId")
+                    .setParameter("postId", postId)
+                    .setParameter("userId", user.getId())
+                    .executeUpdate();
+            manager.createNativeQuery("DELETE FROM users_retweeted l where l.retweeted_id =:postId and l.user_id=:userId")
+                    .setParameter("postId", postId)
+                    .setParameter("userId", user.getId())
+                    .executeUpdate();
+            manager.createNativeQuery("DELETE FROM users_posts l where l.posts_id =:postId and l.user_id=:userId")
+                    .setParameter("postId", postId)
+                    .setParameter("userId", user.getId())
+                    .executeUpdate();
+            manager.createNativeQuery("DELETE FROM users_saved l where l.saved_id =:postId and l.user_id=:userId")
+                    .setParameter("postId", postId)
+                    .setParameter("userId", user.getId())
+                    .executeUpdate();
+            manager.flush();
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        }
         postRepository.deleteById(postId);
         return true;
     }
@@ -139,7 +182,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public boolean retweetPost(User user, Long postId) {
+    public UserPost retweetPost(User user, Long postId) {
         Post originalPost = postRepository.getById(postId);
         Post post = user.getPosts().stream().filter(p -> p.getId().equals(postId)).findFirst().orElse(null);
         if (post == null) {
@@ -158,16 +201,16 @@ public class PostServiceImpl implements PostService {
                 catch (IOException ex)
                 {
                     postRepository.deleteById(newPost.getId());
-                    return false;
+                    return null;
                 }
             }
 
             user.getPosts().add(newPost);
             user.getRetweeted().add(originalPost);
             userRepository.save(user);
-            return true;
+            return new UserPost(user, newPost);
         }
-        return false;
+        return null;
     }
 
     private void deletePost(List<Post> posts, Long postId){
@@ -183,6 +226,10 @@ public class PostServiceImpl implements PostService {
 
     private List<UserPost> convert(List<Post> posts){
         User currentUser = userService.getLoggedInUser();
+        return convert(posts, currentUser);
+    }
+
+    private List<UserPost> convert(List<Post> posts, User currentUser){
         List<User> users = userRepository.findAll();
         var postsList = new ArrayList<UserPost>();
         for (var user : users)

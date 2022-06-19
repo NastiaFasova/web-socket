@@ -5,14 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class PostDto {
+public class CommentDto {
     private Long id;
+    private Long postId;
 
     @JsonCreator
-    public PostDto(@JsonProperty("id") Long id) {
+    public CommentDto(@JsonProperty("id") Long id,@JsonProperty("postId") Long postId) {
         this.id = id;
-    }
-
-    public PostDto() {
+        this.postId = postId;
     }
 }

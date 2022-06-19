@@ -2,10 +2,9 @@ package com.example.kpi.socialnetwork.controller;
 
 import com.example.kpi.socialnetwork.common.UserFollow;
 import com.example.kpi.socialnetwork.common.UserPost;
-import com.example.kpi.socialnetwork.model.Friendship;
-import com.example.kpi.socialnetwork.model.Post;
+import com.example.kpi.socialnetwork.model.Responses.UserResponse;
 import com.example.kpi.socialnetwork.model.User;
-import com.example.kpi.socialnetwork.model.dto.UserRegisterDto;
+import com.example.kpi.socialnetwork.model.dto.EditUserDto;
 import com.example.kpi.socialnetwork.model.dto.UserUpdateDto;
 import com.example.kpi.socialnetwork.model.mapper.UserUpdateMapper;
 import com.example.kpi.socialnetwork.service.FriendshipService;
@@ -13,6 +12,9 @@ import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.UserService;
 import com.example.kpi.socialnetwork.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -30,14 +32,16 @@ public class UserController {
     private final PostService postService;
     private final FriendshipService friendshipService;
     private final UserUpdateMapper userUpdateMapper;
+    private final SimpMessagingTemplate messageTemplate;
 
     @Autowired
     public UserController(UserService userService, PostService postService,
-                          FriendshipService friendshipService, UserUpdateMapper userUpdateMapper) {
+                          FriendshipService friendshipService, UserUpdateMapper userUpdateMapper, SimpMessagingTemplate messageTemplate) {
         this.userService = userService;
         this.postService = postService;
         this.friendshipService = friendshipService;
         this.userUpdateMapper = userUpdateMapper;
+        this.messageTemplate = messageTemplate;
     }
 
     @GetMapping("/me")
@@ -100,7 +104,7 @@ public class UserController {
     public String editProfile(@Valid @ModelAttribute("formData") UserUpdateDto userUpdateDto,
                               BindingResult bindingResult,
                               @RequestParam("user-avatar") MultipartFile avatar,
-                              @RequestParam("bg") MultipartFile panorama) throws IOException {
+                              @RequestParam("bg") MultipartFile panorama) throws IOException, InterruptedException {
         if (bindingResult != null && bindingResult.hasErrors()) {
             return "redirect:/edit";
         }
@@ -127,6 +131,13 @@ public class UserController {
         }
         User registeredUser = userService.save(userUpdateMapper.getUser(userUpdateDto, user));
 
+        messageTemplate.convertAndSend("/topic/users/edit", new UserResponse(registeredUser));
         return "redirect:/me";
+    }
+
+    @MessageMapping("/users/edit")
+    @SendTo({"/topic/users/edit"})
+    public UserResponse sendUser(EditUserDto userDto){
+        return new UserResponse(userDto);
     }
 }

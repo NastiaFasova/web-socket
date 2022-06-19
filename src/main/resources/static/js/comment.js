@@ -16,9 +16,9 @@ function createComment(e)
     }
     let data = new FormData();
     let postId = input.dataset.postId;
-    data.append('postId', input.dataset.postId);
+    data.append('postId', postId);
     data.append('commentContent', input.value);
-    fetch(`${location.origin}/comment/create`, {
+    fetch(`${location.origin}/api/comments/create`, {
         method: "PUT",
         body: data
     })
@@ -28,15 +28,12 @@ function createComment(e)
             return response.text();
         }
     })
-    .then(html =>{
-        document.querySelector(`.post-comments-${postId}`).insertAdjacentHTML('afterbegin', html);
-        input.value = '';
-
-        let commentCounter = document.querySelector(`.comments-counter-${postId}`);
-        if (commentCounter)
+    .then(commentId =>{
+        if (window.stompClient != null)
         {
-            commentCounter.textContent = `${Number(commentCounter.textContent.split(' ')[0]) + 1} Comments`;
+            window.stompClient.send("/app/comments", {}, JSON.stringify({id : Number(commentId), postId: Number(postId)}));
         }
+        input.value = '';
     })
     .catch(e => console.log(e));
 }

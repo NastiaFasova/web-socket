@@ -35,6 +35,7 @@ public class UserPost {
         content = post.getContent();
         comments = new ArrayList<>();
         likes = new ArrayList<>();
+        savesCount = 0l;
         if (post.getLikes() != null)
         {
             likes.addAll(post.getLikes());

@@ -21,7 +21,7 @@ window.addEventListener('load', function (){
 
 function retweet(btn)
 {
-    fetch(`${location.origin}/api/posts/retweet/${btn.dataset.postId}`, {
+    fetch(`${location.origin}/retweet/${btn.dataset.postId}`, {
         method: 'POST'
     })
     .then(response => {
@@ -34,11 +34,7 @@ function retweet(btn)
         if (success)
         {
             btn.classList.toggle('active');
-            if (success == 'true')
-            {
-                btn.removeAttribute('data-user-id');
-                btn.children[1].innerText = 'Retweeted';
-            }
+            btn.removeAttribute('data-user-id');
         }
     });
 }

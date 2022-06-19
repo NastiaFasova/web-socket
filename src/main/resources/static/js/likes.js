@@ -12,24 +12,50 @@ window.addEventListener('load', function(){
     });
 });
 
-function likeComment (e){
+function likeComment(e)
+{
     let btn = getLikeBtn(e);
-    like(btn, btn.nextElementSibling, `${location.origin}/api/likes/comment/${btn.dataset.commentId}`);
- }
-
-function likePost (e){
-    let btn = getLikeBtn(e);
-    let isLiked = like(btn, btn.parentElement.previousElementSibling.children[0], `${location.origin}/api/likes/post/${btn.dataset.postId}`, (isLiked) => {
-
-             let likeText = btn.children[1];
-             if (likeText && isLiked)
-             {
-                 likeText.textContent = isLiked == 'true'
-                     ? `${likeText.textContent}d`
-                     : likeText.textContent.substr(0, 4);
-             }
-         });
+    if (btn)
+    {
+        btn.classList.toggle('active');
+        if (window.stompClient != null)
+        {
+            window.stompClient.send("/app/comments/like", {}, btn.dataset.commentId);
+        }
+    }
 }
+
+function likePost(e)
+{
+    let btn = getLikeBtn(e);
+    if (btn)
+    {
+        btn.classList.toggle('active');
+        if (window.stompClient != null)
+        {
+            window.stompClient.send("/app/tweets/like", {}, btn.dataset.postId);
+        }
+    }
+}
+
+//function likeComment (e){
+//    let btn = getLikeBtn(e);
+//    like(btn, btn.nextElementSibling, `${location.origin}/api/likes/comment/${btn.dataset.commentId}`);
+// }
+//
+//function likePost (e){
+//    let btn = getLikeBtn(e);
+//    let isLiked = like(btn, btn.parentElement.previousElementSibling.children[0], `${location.origin}/api/likes/post/${btn.dataset.postId}`, (isLiked) => {
+//
+//             let likeText = btn.children[1];
+//             if (likeText && isLiked)
+//             {
+//                 likeText.textContent = isLiked == 'true'
+//                     ? `${likeText.textContent}d`
+//                     : likeText.textContent.substr(0, 4);
+//             }
+//         });
+//}
 
 function getLikeBtn (e)
 {

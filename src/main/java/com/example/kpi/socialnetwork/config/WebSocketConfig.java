@@ -2,13 +2,22 @@ package com.example.kpi.socialnetwork.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.*;
+
+//@Configuration
+//@EnableWebSocket
+//public class WebSocketConfig implements WebSocketConfigurer {
+//    @Override
+//    public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
+//        webSocketHandlerRegistry.addHandler(new SocketTextHandler(), "/user");
+//    }
+//}
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -18,7 +27,41 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/posts");
-        registry.addEndpoint("/posts").withSockJS();
+        registry.addEndpoint("/tweets")
+                .withSockJS()
+                .setClientLibraryUrl("/js/sockjs.js")
+                .setWebSocketEnabled(true);
+        registry.addEndpoint("/tweets/user")
+                .withSockJS()
+                .setClientLibraryUrl("/js/sockjs.js")
+                .setWebSocketEnabled(true);
+        registry.addEndpoint("/comments")
+                .withSockJS()
+                .setClientLibraryUrl("/js/sockjs.js")
+                .setWebSocketEnabled(true);
+        registry.addEndpoint("/comments/like")
+                .withSockJS()
+                .setClientLibraryUrl("/js/sockjs.js")
+                .setWebSocketEnabled(true);
+        registry.addEndpoint("/tweets/like")
+                .withSockJS()
+                .setClientLibraryUrl("/js/sockjs.js")
+                .setWebSocketEnabled(true);
+        registry.addEndpoint("/tweets/delete")
+                .withSockJS()
+                .setClientLibraryUrl("/js/sockjs.js")
+                .setWebSocketEnabled(true);
+        registry.addEndpoint("/users/edit")
+                .withSockJS()
+                .setClientLibraryUrl("/js/sockjs.js")
+                .setWebSocketEnabled(true);
+        registry.addEndpoint("/tweets/edit")
+                .withSockJS()
+                .setClientLibraryUrl("/js/sockjs.js")
+                .setWebSocketEnabled(true);
+        registry.addEndpoint("/tweets/save")
+                .withSockJS()
+                .setClientLibraryUrl("/js/sockjs.js")
+                .setWebSocketEnabled(true);
     }
 }

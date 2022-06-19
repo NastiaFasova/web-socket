@@ -18,27 +18,27 @@
         <header th:replace="fragments/header :: header('true', 'true', 'true')"></header>
       </div>
       <!-- Panorama -->
-      <div id="panorama" th:style="'background-image:url(' + @{${user.user.photosImagePath}} + ');'"></div>
-        <main>
+      <div id="panorama" th:style="'background-image:url(' + @{${user.user.photosImagePath}} + ');'" th:attr="data-user-id=${user.user.id}"></div>
+        <main th:attr="data-profile-id=${user.user.id}">
           <div class="container position-relative">
             <div class="white-bg half-panel"></div>
             <div class="profile-image-container d-none d-flex-1000 justify-content-center">
               <div class="profile-image">
-                <img th:src="@{${user.user.avatarImagePath}}" alt="">
+                <img class="avatar" th:src="@{${user.user.avatarImagePath}}" alt="" th:attr="data-user-id=${user.user.id}">
               </div>
             </div>
           </div>
           <div class="container profile-info d-flex">
               <div class="profile-image-container d-none-1000">
                 <div class="profile-image">
-                  <img th:src="@{${user.user.avatarImagePath}}" alt="">
+                  <img class="avatar" th:src="@{${user.user.avatarImagePath}}" alt="" th:attr="data-user-id=${user.user.id}">
                 </div>
               </div>
 
               <div class="d-flex flex-column followers-info">
                 <div class="d-flex justify-content-between followers-info-container">
                   <div class="d-flex justify-content-around followers-info-container" style="width: 60%;">
-                    <h5 class="poppins-600" th:text="${user.user.fullName}"></h5>
+                    <h5 class="poppins-600" th:text="${user.user.fullName}" th:attr="data-user-id=${user.user.id}"></h5>
 
                     <div class="d-flex justify-content-around follower-counters">
                       <p class="poppins-500 gray light" th:text="${followers.size()} + ' Followers'"></p>
@@ -55,20 +55,16 @@
                   </button>
 
                 </div>
-                <div class="profile-desc">
+                <div class="profile-desc" th:attr="data-user-id=${user.user.id}">
                   <span class="light" th:text="${user.user.description}"></span>
                 </div>
 
                 <button th:unless="${isCurrentUser or user.isFollowed}" type="submit" class="d-none follow-btn follow-btn-sm" th:attr="data-user-id=${user.user.id}">
-                  <div>
-                    <img src="/img/follow.svg" alt="" width="48px" height="48px">
-                    <span>Follow</span>
-                  </div>
+                  <img src="/img/follow.svg" alt="" width="48px" height="48px">
+                  <span>Follow</span>
                 </button>
                 <button th:if="${!isCurrentUser and user.isFollowed}" type="submit" class="d-none follow-btn follow-btn-sm">
-                  <div>
-                    <span>Followed</span>
-                  </div>
+                  <span>Followed</span>
                 </button>
               </div>
           </div>
@@ -103,6 +99,11 @@
         <script src="/js/follow.js"></script>
         <script src="/js/saveTweet.js"></script>
         <script src="/js/retweet.js"></script>
+        <script src="/js/sockjs.js"></script>
+        <script src="/js/stomp.js"></script>
+        <script src="/js/stomp-init.js"></script>
+        <script src="/js/profile-stomp.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
     </body>
 </html>

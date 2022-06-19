@@ -5,7 +5,7 @@ window.addEventListener('load', function(){
 
         if (form.content && form.content.value != '')
         {
-            fetch(`${location.origin}/tweet/create`, {
+            fetch(`${location.origin}/api/posts/create`, {
                 method: "PUT",
                 body: new FormData(form)
             })
@@ -15,10 +15,12 @@ window.addEventListener('load', function(){
                     return response.text();
                 }
             })
-            .then(html =>{
-                form.insertAdjacentHTML('afterend', html);
-                form.content.value = '';
-                form.elements['tweet-image'].value = '';
+            .then(postId =>{
+                form.reset();
+                if (window.stompClient != null)
+                {
+                    window.stompClient.send("/app/tweets", {}, JSON.stringify({id : Number(postId)}));
+                }
             });
         }
     });

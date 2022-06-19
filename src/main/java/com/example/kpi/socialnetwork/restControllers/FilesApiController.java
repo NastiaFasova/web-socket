@@ -1,6 +1,8 @@
 package com.example.kpi.socialnetwork.restControllers;
 
 import com.example.kpi.socialnetwork.util.FileUploadUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,7 +18,7 @@ public class FilesApiController {
     }
 
     @DeleteMapping("/temp")
-    public boolean deleteFile(@RequestParam("fileName")String fileName){
-        return FileUploadUtil.removeDirectory(fileName);
+    public ResponseEntity<String> deleteFile(@RequestParam("fileName")String fileName){
+        return new ResponseEntity<>(Boolean.toString(FileUploadUtil.removeDirectory(fileName)), HttpStatus.OK);
     }
 }

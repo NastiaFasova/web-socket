@@ -1,6 +1,11 @@
 package com.example.kpi.socialnetwork.config;
 
+import com.example.kpi.socialnetwork.config.converters.DateTimeToStringConverter;
+import com.example.kpi.socialnetwork.config.converters.DateToStringConverter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.converter.GenericConverter;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,5 +30,11 @@ public class MvcConfig implements WebMvcConfigurer {
             DIR_NAME = DIR_NAME.replace("../", "");
         }
         registry.addResourceHandler("/" + DIR_NAME + "/**").addResourceLocations("file:/"+ uploadPath + "/");
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter (new DateTimeToStringConverter());
+        registry.addConverter(new DateToStringConverter());
     }
 }
