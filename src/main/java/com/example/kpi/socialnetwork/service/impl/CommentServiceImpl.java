@@ -57,4 +57,16 @@ public class CommentServiceImpl implements CommentService {
 
         return new UserComment(savedComment, currentUser);
     }
+
+    @Override
+    public UserComment findById(Long commentId) {
+        var comment = commentRepository.findById(commentId).orElse(null);
+        if (comment != null)
+        {
+            var user = userService.getByEmail(comment.getUserEmail());
+
+            return new UserComment(comment, user);
+        }
+        return null;
+    }
 }

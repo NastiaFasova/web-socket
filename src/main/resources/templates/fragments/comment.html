@@ -1,17 +1,17 @@
 <div class="post-comment d-flex" th:fragment="comment">
     <div class="post-comment-avatar d-flex flex-column justify-content-start">
-        <img th:src="@{${comment.author.avatarImagePath}}" alt="" width="45px" height="45px">
+        <img class="avatar" th:src="@{${comment.author.avatarImagePath}}" alt="" width="45px" height="45px" th:attr="data-user-id=${comment.author.id}">
     </div>
     <div class="d-flex flex-column" style="width:100%;">
         <div class="post-comment-body">
             <div class="post-comment-body-container d-flex flex-column">
                 <div class="post-comment-author d-flex">
-                    <h6 th:text="${comment.author.fullName}"></h6>
+                    <h6 th:text="${comment.author.fullName}" th:attr="data-user-id=${comment.author.id}"></h6>
                     <span class="small-text light-gray"
-                          th:text="${{comment.getLocalDateTime()}}"></span>
+                          th:text="${{comment.localDateTime}}"></span>
                 </div>
                 <div class="post-comment-content" >
-                    <p th:text="${comment.getContent()}"></p>
+                    <p th:text="${comment.content}"></p>
                 </div>
             </div>
         </div>

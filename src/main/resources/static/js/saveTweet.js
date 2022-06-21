@@ -28,15 +28,5 @@ function saveTweet(btn, counter)
     })
     .then(isSaved => {
         btn.classList.toggle('active');
-        let saved = isSaved == 'true';
-        counter.textContent = `${Number(counter.textContent.split(' ')[0]) + (saved ? 1 : -1)} Saved`;
-        if (saved)
-        {
-            btn.children[1].textContent = 'Saved';
-        }
-        else
-        {
-            btn.children[1].textContent = 'Save';
-        }
     });
 }

@@ -52,12 +52,12 @@ hr {
   max-height: 40px;
 }
 
-.follow-btn div {
+.follow-btn {
   position: relative;
   bottom: 10px;
 }
 
-.follow-btn div img {
+.follow-btn img {
   position: relative;
   bottom: 2px;
   filter: invert(100%) sepia(0%) saturate(7467%) hue-rotate(216deg) brightness(97%) contrast(108%);

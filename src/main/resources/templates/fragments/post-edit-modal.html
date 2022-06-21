@@ -15,13 +15,13 @@
                         </label>
                     </form>
 
-                    <div class="post-thumbnail edit-post-thumbnail" th:unless="${#strings.isEmpty(post.imagePath)}">
+                    <div class="post-thumbnail edit-post-thumbnail" th:classappend="${#strings.isEmpty(post.imagePath)} ? 'd-none' : ''">
                         <img th:src="@{${post.imagePath}}" alt="">
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn follow-btn edit-tweet-save-btn">Save</button>
+                <button type="button" class="btn follow-btn edit-tweet-save-btn" data-bs-dismiss="modal">Save</button>
             </div>
         </div>
     </div>

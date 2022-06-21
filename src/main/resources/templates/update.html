@@ -53,6 +53,13 @@
                                           class="form-control form-control-user alert alert-danger" style="margin-top: 25px"></span>
                                 </div>
                                 <div class="form-floating mb-3">
+                                    <textarea name = "description" class="form-control" id="floatingDesc"
+                                              th:field="*{description}"></textarea>
+                                    <label for="floatingDesc" class="poppins-600" >Description</label>
+                                    <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
+                                          class="form-control form-control-user alert alert-danger" style="margin-top: 25px"></span>
+                                </div>
+                                <div class="form-floating mb-3">
                                     <div class="col-md-12">
                                         <div class="input-group input-group-md">
 										<span class="input-group-addon">
@@ -65,12 +72,12 @@
 
                                 <div class="mb-3 d-flex flex-column">
                                     <label for="new-avatar">
-                                        <span>Select you avatar</span>
+                                        <span>Select your avatar</span>
                                         <img src="/img/image.svg" alt="" width="24px" height="24px">
                                         <input type="file" id="new-avatar" name="user-avatar" accept="image/png, image/jpeg" hidden/>
                                     </label>
                                     <label for="new-background">
-                                        <span>Select you background image</span>
+                                        <span>Select your background image</span>
                                         <img src="/img/image.svg" alt="" width="24px" height="24px">
                                         <input type="file" id="new-background" name="bg" accept="image/png, image/jpeg" hidden/>
                                     </label>
@@ -96,5 +103,10 @@
     <span>&copy; Created by Yarmacho </span>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="/js/sockjs.js"></script>
+<script src="/js/stomp.js"></script>
+<script src="/js/stomp-init.js"></script>
+<script src="/js/updateUser.js"></script>
+
 </body>
 </html>

@@ -2,33 +2,55 @@ package com.example.kpi.socialnetwork.controller;
 
 import com.example.kpi.socialnetwork.common.UserPost;
 import com.example.kpi.socialnetwork.model.Post;
+import com.example.kpi.socialnetwork.model.Responses.PostEditResponse;
+import com.example.kpi.socialnetwork.model.Responses.PostResponse;
 import com.example.kpi.socialnetwork.model.User;
+import com.example.kpi.socialnetwork.model.dto.PostDto;
+import com.example.kpi.socialnetwork.model.dto.PostEditDto;
+import com.example.kpi.socialnetwork.model.json.PostLight;
+import com.example.kpi.socialnetwork.model.json.UserLight;
+import com.example.kpi.socialnetwork.repository.PostRepository;
 import com.example.kpi.socialnetwork.repository.UserRepository;
 import com.example.kpi.socialnetwork.service.FriendshipService;
 import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class PostController {
     private final PostService postService;
+    private final PostRepository postRepository;
     private final UserService userService;
     private final UserRepository userRepository;
     private final FriendshipService friendshipService;
+    private final SpringTemplateEngine templateEngine;
+    private final SimpMessagingTemplate messageTemplate;
 
     @Autowired
-    public PostController(PostService postService, UserService userService, UserRepository userRepository, FriendshipService friendshipService) {
+    public PostController(PostService postService, PostRepository postRepository, UserService userService,
+                          UserRepository userRepository, FriendshipService friendshipService, SpringTemplateEngine engine, SimpMessagingTemplate messageTemplate) {
         this.postService = postService;
+        this.postRepository = postRepository;
         this.userService = userService;
         this.userRepository = userRepository;
         this.friendshipService = friendshipService;
+        this.templateEngine = engine;
+        this.messageTemplate = messageTemplate;
     }
 
     @PostMapping("/tweet")
@@ -39,7 +61,8 @@ public class PostController {
     }
 
     @PutMapping("/tweet/create")
-    public String createPost(Model model, @RequestParam("tweet-image")MultipartFile postImage, @RequestParam("content") String content) throws NullPointerException, IOException {
+    public String createPost(Model model, @RequestParam("tweet-image")MultipartFile postImage,
+                             @RequestParam("content") String content) throws NullPointerException, IOException {
         var post = postService.createPost(content, postImage);
         model.addAttribute("post", post);
         model.addAttribute("postAuthor", post.getAuthor());
@@ -60,12 +83,23 @@ public class PostController {
 
     @GetMapping("/posts")
     public String getAllPosts(Model model){
-        User user = userService.getLoggedInUser();
         model.addAttribute("postsList", postService.getAllPosts());
         model.addAttribute("currentUser", userService.getLoggedInUser());
         model.addAttribute("registeredUsers", friendshipService.getUsersToFollow());
         model.addAttribute("tweet", new Post());
         return "posts";
+    }
+
+    @PostMapping(value = "/posts/{id}", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
+    public String getPost(Model model, @PathVariable("id") Long id) {
+        User user = userService.getLoggedInUser();
+        var post = postService.findById(id);
+        model.addAttribute("post", post);
+        model.addAttribute("currentUser", user);
+        model.addAttribute("postAuthor", user);
+        return "fragments/new-post :: post";
+
     }
 
     @PostMapping("/save/{id}")
@@ -98,8 +132,9 @@ public class PostController {
 
     @GetMapping("/edit/{id}/dialog")
     public String editPost(@PathVariable(value = "id") Long postId, Model model) {
+        var currentUser = userService.getLoggedInUser();
         var post = postService.findById(postId);
-        if (post != null) {
+        if (post != null && currentUser.getId().equals(post.getAuthor().getId())) {
             model.addAttribute("post", post);
             return "fragments/post-edit-modal :: post-edit-modal";
         }
@@ -118,5 +153,46 @@ public class PostController {
             return "fragments/post :: post";
         }
         throw new RuntimeException();
+    }
+
+    @PostMapping("/retweet/{id}")
+    public String retweet(@PathVariable("id") Long postId, Model model) throws IOException {
+        var post = postService.retweetPost(userService.getLoggedInUser(), postId);
+        var postLight = new PostLight(post);
+
+        var context = new Context(Locale.US);
+        context.setVariable("post", postLight);
+        context.setVariable("currentUser", postLight.getAuthor());
+        context.setVariable("postAuthor", postLight.getAuthor());
+        var html = templateEngine.process("fragments/new-post", context);
+        messageTemplate.convertAndSend("/topic/tweets", new PostResponse(html, post.getAuthor().getId(), post.getId()));
+        messageTemplate.convertAndSend("/topic/tweets/user", new PostResponse(html, post.getAuthor().getId(), post.getId()));
+
+        model.addAttribute("post", postLight);
+        model.addAttribute("currentUser", postLight.getAuthor());
+        model.addAttribute("postAuthor", postLight.getAuthor());
+        return "fragments/new-post";
+    }
+
+    @MessageMapping("/tweets/edit")
+    @SendTo("/topic/tweets/edit")
+    public PostEditResponse send(PostEditDto postDto)
+    {
+        return new PostEditResponse(postDto);
+    }
+
+    @MessageMapping("/tweets")
+    @SendTo({"/topic/tweets", "/topic/tweets/user"})
+    public PostResponse send(PostDto postDto, Principal principal) {
+        var user = userService.getByEmail(principal.getName());
+        var post = postRepository.findById(postDto.getId()).orElse(null);
+        var postLight = new PostLight(post, new UserLight(user));
+
+        var context = new Context(Locale.US);
+        context.setVariable("post", postLight);
+        context.setVariable("currentUser", postLight.getAuthor());
+        context.setVariable("postAuthor", postLight.getAuthor());
+        var html = templateEngine.process("fragments/new-post", context);
+        return new PostResponse(html, user.getId(), post.getId());
     }
 }

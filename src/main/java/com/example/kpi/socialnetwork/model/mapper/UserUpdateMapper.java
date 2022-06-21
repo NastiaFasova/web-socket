@@ -24,6 +24,7 @@ public class UserUpdateMapper {
         {
             user.setDateOfBirth(LocalDate.parse(userUpdateDto.getDateOfBirth(), formatter));
         }
+        user.setDescription(userUpdateDto.getDescription());
         user.setPosts(loggedInUser.getPosts());
         user.setSaved(loggedInUser.getSaved());
         user.setLikes(loggedInUser.getLikes());
@@ -40,6 +41,7 @@ public class UserUpdateMapper {
         user.setBackground(loggedInUser.getBackground());
         user.setPhone(loggedInUser.getPhone());
         user.setAddress(loggedInUser.getAddress());
+        user.setDescription(loggedInUser.getDescription());
         return user;
     }
 }
