@@ -10,6 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * Helps to upload files into server in case of adding avatar or background bu user
+ * */
 public class FileUploadUtil {
     public static void saveFile(String uploadDir, String fileName,
                                 MultipartFile multipartFile) throws IOException {
@@ -46,8 +49,7 @@ public class FileUploadUtil {
         return Path.of(path, fileName).toString();
     }
 
-    public static boolean removeFile(String path)
-    {
+    public static boolean removeFile(String path) {
         try {
             return Files.deleteIfExists(Path.of(path));
         } catch (IOException e) {
@@ -59,8 +61,7 @@ public class FileUploadUtil {
         return removeDirectory(Paths.get(path).toFile());
     }
 
-    public static boolean removeDirectory(File directoryToBeDeleted)
-    {
+    public static boolean removeDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
             for (File file : allContents) {
@@ -70,8 +71,7 @@ public class FileUploadUtil {
         return directoryToBeDeleted.delete();
     }
 
-    private static String trim(String path)
-    {
+    private static String trim(String path) {
         if (path.startsWith("~/"))
         {
             path = path.substring(2);
