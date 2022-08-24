@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +28,8 @@ public class PostApiController {
     private final SimpMessagingTemplate messageTemplate;
 
     @Autowired
-    public PostApiController(UserService userService, PostService postService, SimpMessagingTemplate messageTemplate) {
+    public PostApiController(UserService userService, PostService postService,
+                             SimpMessagingTemplate messageTemplate) {
         this.userService = userService;
         this.postService = postService;
         this.messageTemplate = messageTemplate;
@@ -47,20 +47,17 @@ public class PostApiController {
 
     @MessageMapping("/tweets/delete")
     @SendTo("/topic/tweets/delete")
-    public PostDeleteResponse deletePost(String postId, Principal principal)
-    {
-        try
-        {
-            return new PostDeleteResponse(Long.valueOf(postId), postService.deletePost(Long.valueOf(postId), principal.getName()));
-        }
-        catch (Exception ex)
-        {
+    public PostDeleteResponse deletePost(String postId, Principal principal) {
+        try {
+            return new PostDeleteResponse(Long.valueOf(postId), postService.deletePost(Long.valueOf(postId),
+                    principal.getName()));
+        } catch (Exception ex) {
             return new PostDeleteResponse(Long.valueOf(postId), false);
         }
     }
 
     @PutMapping("/create")
-    public ResponseEntity<Long> createPost(Model model, @RequestParam("tweet-image") MultipartFile postImage,
+    public ResponseEntity<Long> createPost(@RequestParam("tweet-image") MultipartFile postImage,
                              @RequestParam("content") String content) throws Exception {
         var post = postService.createPost(content, postImage);
         return new ResponseEntity<>(post.getId(), HttpStatus.OK);

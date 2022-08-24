@@ -1,5 +1,6 @@
 package com.example.kpi.socialnetwork.service.impl;
 
+import com.example.kpi.socialnetwork.exceptions.LikeException;
 import com.example.kpi.socialnetwork.model.Comment;
 import com.example.kpi.socialnetwork.model.Like;
 import com.example.kpi.socialnetwork.model.Post;
@@ -28,7 +29,7 @@ public class LikeServiceImpl implements LikeService {
      * @param postId is an ID of the post user want to like
      * @param loggedInUserId is an ID of user
      * @return Like Entity
-     * @exception RuntimeException is if user not retrieved
+     * @exception LikeException is if user not retrieved
      * */
     @Override
     public Like addLikeToPost(Long postId, Long loggedInUserId) {
@@ -60,15 +61,19 @@ public class LikeServiceImpl implements LikeService {
             likeRepository.delete(likeByUserAndPost);
             return null;
         }
-        throw new RuntimeException();
+        throw new LikeException("Could not retrieve user or post by ID");
     }
 
     /**
      * Add like to comment
+     * @param commentId is an ID of the comment user want to like
+     * @param loggedInUserId is an ID of user
+     * @return Like Entity
+     * @exception LikeException is if user not retrieved
      * */
     @Override
-    public Like addLikeToComment(Long postId, Long loggedInUserId) {
-        Comment comment = commentRepository.findById(postId).orElse(null);
+    public Like addLikeToComment(Long commentId, Long loggedInUserId) {
+        Comment comment = commentRepository.findById(commentId).orElse(null);
         User user = userRepository.findById(loggedInUserId).orElse(null);
         if (comment != null) {
             Like likeByUserAndPost = comment.getLikes().stream()
@@ -90,6 +95,6 @@ public class LikeServiceImpl implements LikeService {
             likeRepository.delete(likeByUserAndPost);
             return null;
         }
-        throw new RuntimeException();
+        throw new LikeException("Could not retrieve user or post by ID");
     }
 }

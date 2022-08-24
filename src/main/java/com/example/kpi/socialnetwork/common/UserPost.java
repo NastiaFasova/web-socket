@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Dto Entity for a user`s post
+ * */
 @Getter
 @Setter
 public class UserPost {

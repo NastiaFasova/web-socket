@@ -7,25 +7,30 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Repository implementation for User Entity
+ * There are CRUD operations by default:
+ * Create
+ * Read
+ * Update
+ * Delete
+ * */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    /**
+     * Retrieving user by email
+     * */
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.posts where u.email =:email")
     User findByEmail(String email);
 
+    /**
+     * Retrieving user by ID
+     * */
     Optional<User> findById(Long id);
 
+    /**
+     * Retrieving user by ID fetching liked posts
+     * */
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.likes where u.id =:id")
     Optional<User> findByIdFetchLikes(Long id);
-
-    @Query(value = "DELETE FROM users_likes l where l.likes_id =:postId and l.user_id=:userId", nativeQuery = true)
-    boolean deleteUserLikedPost(Long postId, Long userId);
-
-    @Query(value = "DELETE FROM users_retweeted l where l.retweeted_id =:postId and l.user_id=:userId", nativeQuery = true)
-    boolean deleteUserRetweetedPost(Long postId, Long userId);
-
-    @Query(value = "DELETE FROM users_posts l where l.posts_id =:postId and l.user_id=:userId", nativeQuery = true)
-    boolean deleteUserPost(Long postId, Long userId);
-
-    @Query(value = "DELETE FROM users_saved l where l.saved_id =:postId and l.user_id=:userId", nativeQuery = true)
-    boolean deleteUserSavedPost(Long postId, Long userId);
 }

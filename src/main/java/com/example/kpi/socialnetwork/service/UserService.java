@@ -5,6 +5,9 @@ import com.example.kpi.socialnetwork.model.User;
 
 import java.util.List;
 
+/**
+ * Service layer for User Entity
+ * */
 public interface UserService {
     User save(User user);
 

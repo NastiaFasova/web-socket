@@ -13,7 +13,8 @@ import java.io.IOException;
 public class FilesApiController {
 
     @PutMapping("/temp/save/{postId}")
-    public String saveTempFile(@PathVariable("postId") Long postId, @RequestParam("tweet-image")MultipartFile file) throws IOException {
+    public String saveTempFile(@PathVariable("postId") Long postId,
+                               @RequestParam("tweet-image")MultipartFile file) throws IOException {
         return FileUploadUtil.saveTmpFile(postId, file);
     }
 

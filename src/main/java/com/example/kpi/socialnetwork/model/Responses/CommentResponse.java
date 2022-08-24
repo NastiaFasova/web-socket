@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CommentReponse extends HtmlResponse{
+public class CommentResponse extends HtmlResponse{
     private Long postId;
 
-    public CommentReponse(String html, Long postId) {
+    public CommentResponse(String html, Long postId) {
         super(html);
         this.postId = postId;
     }

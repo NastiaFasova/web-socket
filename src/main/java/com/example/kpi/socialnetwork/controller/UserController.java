@@ -11,7 +11,7 @@ import com.example.kpi.socialnetwork.service.FriendshipService;
 import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.UserService;
 import com.example.kpi.socialnetwork.util.FileUploadUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -26,7 +26,11 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * A controller class for a User Entity
+ * */
 @Controller
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final PostService postService;
@@ -34,16 +38,9 @@ public class UserController {
     private final UserUpdateMapper userUpdateMapper;
     private final SimpMessagingTemplate messageTemplate;
 
-    @Autowired
-    public UserController(UserService userService, PostService postService,
-                          FriendshipService friendshipService, UserUpdateMapper userUpdateMapper, SimpMessagingTemplate messageTemplate) {
-        this.userService = userService;
-        this.postService = postService;
-        this.friendshipService = friendshipService;
-        this.userUpdateMapper = userUpdateMapper;
-        this.messageTemplate = messageTemplate;
-    }
-
+    /**
+     * Retrieving and displaying all posts of a logged in user
+     * */
     @GetMapping("/me")
     public String myPosts(Model model) throws NullPointerException {
         User user = userService.getLoggedInUser();
@@ -59,6 +56,9 @@ public class UserController {
         return "profile";
     }
 
+    /**
+     * Retrieving and displaying all posts of a chosen user
+     * */
     @GetMapping("/user/{id}")
     public String userPosts(Model model, @PathVariable("id") long id) throws NullPointerException {
         User currentUser = userService.getLoggedInUser();
@@ -79,6 +79,9 @@ public class UserController {
         return "profile";
     }
 
+    /**
+     * Edit user photos
+     * */
     @PostMapping("/edit-photo")
     public String addBackground(@RequestParam("fileImage") MultipartFile avatar) throws IOException {
         if (avatar.getOriginalFilename() == null || avatar.getOriginalFilename().isEmpty()) {
@@ -93,6 +96,9 @@ public class UserController {
         return "redirect:/me";
     }
 
+    /**
+     * Display a form for editing user profile
+     * */
     @GetMapping("/edit")
     public String editProfileForm(Model model) {
         UserUpdateDto user = userUpdateMapper.getUserUpdateDto(userService.getLoggedInUser());
@@ -100,33 +106,30 @@ public class UserController {
         return "update";
     }
 
+    /**
+     * Edit a user profile and save changes into DB
+     * */
     @PostMapping("/edit")
     public String editProfile(@Valid @ModelAttribute("formData") UserUpdateDto userUpdateDto,
                               BindingResult bindingResult,
                               @RequestParam("user-avatar") MultipartFile avatar,
-                              @RequestParam("bg") MultipartFile panorama) throws IOException, InterruptedException {
+                              @RequestParam("bg") MultipartFile panorama) throws IOException {
         if (bindingResult != null && bindingResult.hasErrors()) {
             return "redirect:/edit";
         }
         var user = userService.getLoggedInUser();
-        if (avatar.getOriginalFilename() != null && !avatar.getOriginalFilename().isEmpty())
-        {
+        if (avatar.getOriginalFilename() != null && !avatar.getOriginalFilename().isEmpty()) {
             String avatarFileName = StringUtils.cleanPath(avatar.getOriginalFilename());
             userUpdateDto.setAvatar(avatarFileName);
             FileUploadUtil.saveFile("user-photos/avatar/" + user.getId(), avatarFileName, avatar);
-        }
-        else
-        {
+        } else {
             userUpdateDto.setAvatar(user.getAvatar());
         }
-        if (panorama.getOriginalFilename() != null && !panorama.getOriginalFilename().isEmpty())
-        {
+        if (panorama.getOriginalFilename() != null && !panorama.getOriginalFilename().isEmpty()) {
             String panoramaFileName = StringUtils.cleanPath(panorama.getOriginalFilename());
             userUpdateDto.setBackground(panoramaFileName);
             FileUploadUtil.saveFile("user-photos/panorama/" + user.getId(), panoramaFileName, panorama);
-        }
-        else
-        {
+        } else {
             userUpdateDto.setBackground(user.getBackground());
         }
         User registeredUser = userService.save(userUpdateMapper.getUser(userUpdateDto, user));
@@ -135,6 +138,9 @@ public class UserController {
         return "redirect:/me";
     }
 
+    /**
+     * Implementing endpoint for instant displaying of user profile changes
+     * */
     @MessageMapping("/users/edit")
     @SendTo({"/topic/users/edit"})
     public UserResponse sendUser(EditUserDto userDto){

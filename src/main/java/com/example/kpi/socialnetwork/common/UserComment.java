@@ -10,6 +10,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Dto Entity for comment of a user
+ * */
 @Getter
 @Setter
 public class UserComment {

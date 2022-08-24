@@ -15,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
 
+/**
+ * A configuration of security and user authorization
+ * */
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -27,6 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Endpoints` configuration, login and logout pages
+     * */
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors().and().csrf().disable()
@@ -57,6 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenValiditySeconds(86400);
     }
 
+    /**
+     * Creating of a bean for encrypting users` passwords
+     * */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -76,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.httpFirewall(allowUrlEncodedSlashHttpFirewall()).ignoring().antMatchers("static/**");
     }
 

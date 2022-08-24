@@ -10,11 +10,13 @@ import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.RegistrationService;
 import com.example.kpi.socialnetwork.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
+/**
+ * Injecting some new data into DB for testing purpose
+ * */
 @Controller
 @RequiredArgsConstructor
 public class InjectDataController {
@@ -25,6 +27,9 @@ public class InjectDataController {
     private final CommentService commentService;
     private final LikeService likeService;
 
+    /**
+     * Adding new users, posts, comments, likes into DB
+     * */
     @PostConstruct
     public void addUsers() {
         User user = User.builder()

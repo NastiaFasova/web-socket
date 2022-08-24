@@ -8,6 +8,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository implementation for Like Entity
+ * There are CRUD operations by default:
+ * Create
+ * Read
+ * Update
+ * Delete
+ * */
 @Repository
 public interface LikeRepository extends JpaRepository<Like,Long> {
 }

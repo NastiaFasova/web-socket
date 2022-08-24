@@ -1,6 +1,7 @@
 package com.example.kpi.socialnetwork.service.impl;
 
 import com.example.kpi.socialnetwork.common.UserFollow;
+import com.example.kpi.socialnetwork.exceptions.FriendshipException;
 import com.example.kpi.socialnetwork.model.Friendship;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.repository.FriendshipRepository;
@@ -78,7 +79,7 @@ public class FriendshipServiceImpl implements FriendshipService {
         User loggedInUser = userRepository.findById(loggedInUserId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
         if (friendship != null && friendship.getAccepted()) {
-            throw new RuntimeException("You are already friends");
+            throw new FriendshipException("You are already friends");
         } else if (friendship != null && !friendship.getAccepted()) {
             friendship.setAccepted(true);
             return friendshipRepository.save(friendship);
