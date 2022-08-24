@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * Custom implementation of UserDetailsService for authorization of users
+ * */
 @Service
 @Primary
 public class CustomUserDetailsService implements UserDetailsService {
@@ -21,6 +24,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userService = userService;
     }
 
+    /**
+     * Retrieving user by email
+     * */
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userService.getByEmail(login);

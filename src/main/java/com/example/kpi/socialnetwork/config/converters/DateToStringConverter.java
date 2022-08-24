@@ -6,6 +6,9 @@ import org.springframework.core.convert.converter.Converter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * A class-converter from LocalDate to String
+ * */
 public class DateToStringConverter implements Converter<LocalDate, String> {
     @Override
     public String convert(LocalDate from) {

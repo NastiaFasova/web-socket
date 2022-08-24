@@ -8,8 +8,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Repository implementation for Comment Entity
+ * There are CRUD operations by default:
+ * Create
+ * Read
+ * Update
+ * Delete
+ * */
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
+    /**
+     * Retrieving a comment by id
+     * */
     @Query("SELECT c FROM Comment c LEFT JOIN FETCH c.likes where c.id =:id")
     Optional<Comment> findById(Long id);
 }

@@ -8,6 +8,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Custom annotation for password validation purpose
+ * */
 @Documented
 @Constraint(validatedBy = PasswordMatchValidator.class)
 @Target({ElementType.TYPE})

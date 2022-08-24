@@ -10,14 +10,25 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository implementation for Post Entity
+ * There are CRUD operations by default:
+ * Create
+ * Read
+ * Update
+ * Delete
+ * */
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-
-    List<Post> findAllByOrderByIdDesc();
-
+    /**
+     * Retrieving post by id
+     * */
     @Query("SELECT p FROM Post p LEFT JOIN FETCH p.likes where p.id =:id")
     Optional<Post> findById(Long id);
 
+    /**
+     * Retrieving post by id and fetching its comments
+     * */
     @Query("SELECT p FROM Post p LEFT JOIN FETCH p.comments where p.id =:id")
     Optional<Post> findByIdFetchComments(Long id);
 }

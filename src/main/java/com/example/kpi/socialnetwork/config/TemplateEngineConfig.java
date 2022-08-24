@@ -6,6 +6,9 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+/**
+ * Configuration for static files. Enabling HTML, CSS, JS
+ * */
 @Configuration
 public class TemplateEngineConfig {
     @Bean

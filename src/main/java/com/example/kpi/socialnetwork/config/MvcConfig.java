@@ -12,10 +12,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * A configuration of uploading user`s photos
+ * */
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
     private static String DIR_NAME = "user-photos";
-
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

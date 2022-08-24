@@ -1,6 +1,7 @@
 package com.example.kpi.socialnetwork.controller;
 
 import com.example.kpi.socialnetwork.common.UserPost;
+import com.example.kpi.socialnetwork.exceptions.PostException;
 import com.example.kpi.socialnetwork.model.Post;
 import com.example.kpi.socialnetwork.model.Responses.PostEditResponse;
 import com.example.kpi.socialnetwork.model.Responses.PostResponse;
@@ -14,6 +15,7 @@ import com.example.kpi.socialnetwork.repository.UserRepository;
 import com.example.kpi.socialnetwork.service.FriendshipService;
 import com.example.kpi.socialnetwork.service.PostService;
 import com.example.kpi.socialnetwork.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -31,28 +33,23 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * A controller class for a Post entity
+ * */
 @Controller
+@RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
     private final PostRepository postRepository;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final FriendshipService friendshipService;
     private final SpringTemplateEngine templateEngine;
     private final SimpMessagingTemplate messageTemplate;
 
-    @Autowired
-    public PostController(PostService postService, PostRepository postRepository, UserService userService,
-                          UserRepository userRepository, FriendshipService friendshipService, SpringTemplateEngine engine, SimpMessagingTemplate messageTemplate) {
-        this.postService = postService;
-        this.postRepository = postRepository;
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.friendshipService = friendshipService;
-        this.templateEngine = engine;
-        this.messageTemplate = messageTemplate;
-    }
-
+    /**
+     * Save a post into DB
+     * @param post is an object of post that will be saved
+     * */
     @PostMapping("/tweet")
     public String addPost(@ModelAttribute("tweet") Post post) throws NullPointerException {
         User user = userService.getLoggedInUser();
@@ -60,6 +57,11 @@ public class PostController {
         return "redirect:/me";
     }
 
+    /**
+     * Save a post into DB with new features
+     * @param postImage is an image attached to post
+     * @param content is a text of a post
+     * */
     @PutMapping("/tweet/create")
     public String createPost(Model model, @RequestParam("tweet-image")MultipartFile postImage,
                              @RequestParam("content") String content) throws NullPointerException, IOException {
@@ -70,6 +72,9 @@ public class PostController {
         return "fragments/post";
     }
 
+    /**
+     * Retrieve all saved posts
+     * */
     @GetMapping("/saved")
     public String mySaved(Model model) throws NullPointerException {
         User user = userService.getLoggedInUser();
@@ -81,6 +86,9 @@ public class PostController {
         return "posts";
     }
 
+    /**
+     * Retrieve all posts
+     * */
     @GetMapping("/posts")
     public String getAllPosts(Model model){
         model.addAttribute("postsList", postService.getAllPosts());
@@ -108,6 +116,9 @@ public class PostController {
         return userService.savePost(loggedInUser, postId) != null;
     }
 
+    /**
+     * Retweet a post
+     * */
     @GetMapping("/retweet/{id}")
     public String retweetPost(@PathVariable(value = "id") Long postId, Model model) throws IOException {
         User loggedInUser = userService.getLoggedInUser();
@@ -117,6 +128,9 @@ public class PostController {
         return "redirect:/posts";
     }
 
+    /**
+     * Delete a post
+     * */
     @GetMapping("/delete-post/{id}")
     public String deletePost(@PathVariable(value = "id") Long postId, Model model) {
         User loggedInUser = userService.getLoggedInUser();
@@ -127,9 +141,12 @@ public class PostController {
             model.addAttribute("postsList", posts);
             return "redirect:/me";
         }
-        throw new RuntimeException();
+        throw new PostException("Post not found by ID");
     }
 
+    /**
+     * Display a form for editing a post
+     * */
     @GetMapping("/edit/{id}/dialog")
     public String editPost(@PathVariable(value = "id") Long postId, Model model) {
         var currentUser = userService.getLoggedInUser();
@@ -138,9 +155,12 @@ public class PostController {
             model.addAttribute("post", post);
             return "fragments/post-edit-modal :: post-edit-modal";
         }
-        throw new RuntimeException();
+        throw new PostException("Post not found by ID");
     }
 
+    /**
+     * Save the edited post
+     * */
     @PostMapping("/edit/{id}")
     public String editPost(@PathVariable(value = "id") Long postId, @RequestParam("edit-tweet") String content, @RequestParam("tweet-image") MultipartFile file, Model model) {
         var loggedInUser = userService.getLoggedInUser();
@@ -152,7 +172,7 @@ public class PostController {
             model.addAttribute("postAuthor", loggedInUser);
             return "fragments/post :: post";
         }
-        throw new RuntimeException();
+        throw new PostException("Post not found by ID");
     }
 
     @PostMapping("/retweet/{id}")
@@ -174,6 +194,9 @@ public class PostController {
         return "fragments/new-post";
     }
 
+    /**
+     * Implementing endpoint for edited posts instant displaying
+     * */
     @MessageMapping("/tweets/edit")
     @SendTo("/topic/tweets/edit")
     public PostEditResponse send(PostEditDto postDto)
@@ -181,6 +204,9 @@ public class PostController {
         return new PostEditResponse(postDto);
     }
 
+    /**
+     * Implementing endpoint for all posts instant displaying
+     * */
     @MessageMapping("/tweets")
     @SendTo({"/topic/tweets", "/topic/tweets/user"})
     public PostResponse send(PostDto postDto, Principal principal) {

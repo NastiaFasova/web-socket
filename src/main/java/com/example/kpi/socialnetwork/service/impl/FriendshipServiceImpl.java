@@ -1,30 +1,31 @@
 package com.example.kpi.socialnetwork.service.impl;
 
 import com.example.kpi.socialnetwork.common.UserFollow;
+import com.example.kpi.socialnetwork.exceptions.FriendshipException;
 import com.example.kpi.socialnetwork.model.Friendship;
 import com.example.kpi.socialnetwork.model.User;
 import com.example.kpi.socialnetwork.repository.FriendshipRepository;
 import com.example.kpi.socialnetwork.repository.UserRepository;
 import com.example.kpi.socialnetwork.service.FriendshipService;
 import com.example.kpi.socialnetwork.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of service methods for Friendship Entity
+ * */
 @Service
+@RequiredArgsConstructor
 public class FriendshipServiceImpl implements FriendshipService {
     private final FriendshipRepository friendshipRepository;
     private final UserRepository userRepository;
     private final UserService userService;
 
-    @Autowired
-    public FriendshipServiceImpl(FriendshipRepository friendshipRepository, UserRepository userRepository, UserService userService) {
-        this.friendshipRepository = friendshipRepository;
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }
-
+    /**
+     * Retrieving Followers of User by Id
+     * */
     @Override
     public List<UserFollow> getFollowersOfUser(Long userId) {
         var userFollowers = friendshipRepository.findAllFollowersOfUser(userId);
@@ -37,6 +38,9 @@ public class FriendshipServiceImpl implements FriendshipService {
                         friendships.stream().filter(friendship -> friendship.getUserReceiver().getId().equals(f.getId())).count())).collect(Collectors.toList());
     }
 
+    /**
+     * Retrieving Followings of User by Id
+     * */
     @Override
     public List<UserFollow> getFollowingsOfUser(Long userId) {
         var userFollowings = friendshipRepository.findAllFollowingsOfUser(userId);
@@ -49,6 +53,9 @@ public class FriendshipServiceImpl implements FriendshipService {
                         friendships.stream().filter(friendship -> friendship.getUserReceiver().getId().equals(f.getId())).count())).collect(Collectors.toList());
     }
 
+    /**
+     * Retrieving users recommended to follow
+     * */
     @Override
     public List<UserFollow> getUsersToFollow() {
         var friendships = friendshipRepository.findAll();
@@ -63,13 +70,16 @@ public class FriendshipServiceImpl implements FriendshipService {
                 .limit(3).collect(Collectors.toList());
     }
 
+    /**
+     * Implementation of following to a user
+     * */
     @Override
     public Friendship follow(Long loggedInUserId, Long userId) {
         Friendship friendship = friendshipRepository.findExistingFriendships(loggedInUserId, userId);
         User loggedInUser = userRepository.findById(loggedInUserId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
         if (friendship != null && friendship.getAccepted()) {
-            throw new RuntimeException("You are already friends");
+            throw new FriendshipException("You are already friends");
         } else if (friendship != null && !friendship.getAccepted()) {
             friendship.setAccepted(true);
             return friendshipRepository.save(friendship);

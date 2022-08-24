@@ -24,6 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of service methods for Post Entity
+ * */
 @Service
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
@@ -40,6 +43,9 @@ public class PostServiceImpl implements PostService {
         this.userService = userService;
     }
 
+    /**
+     * Saving post into DB
+     * */
     @Override
     public UserPost savePost(String email, Post post) {
         User userByEmail = userRepository.findByEmail(email);
@@ -54,6 +60,12 @@ public class PostServiceImpl implements PostService {
         return new UserPost(userByEmail, newPost);
     }
 
+    /**
+     * Creating post
+     * @param content is the text user writes in the post
+     * @param file is the picture which user attaches
+     * @return UserPost is the dto object
+     * */
     @Override
     public UserPost createPost(String content, MultipartFile file) throws IOException {
         var user = userService.getLoggedInUser();
@@ -75,6 +87,10 @@ public class PostServiceImpl implements PostService {
         return new UserPost(user, newPost);
     }
 
+    /**
+     * Retrieving all posts of user
+     * @param userId is the ID of user
+     * */
     @Override
     public List<UserPost> getPostsOfUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
@@ -86,11 +102,20 @@ public class PostServiceImpl implements PostService {
         return convert(null);
     }
 
+    /**
+     * Retrieving post by ID
+     * @param postId is the ID of post
+     * */
     @Override
     public UserPost findById(Long postId) {
         return findById(postId, userService.getLoggedInUser());
     }
 
+    /**
+     * Retrieving post by ID and current logged in user
+     * @param postId is the ID of post
+     * @param currentUser is logged in user
+     * */
     @Override
     public UserPost findById(Long postId, User currentUser) {
         var post = postRepository.findByIdFetchComments(postId).orElseThrow();
@@ -100,34 +125,53 @@ public class PostServiceImpl implements PostService {
         return res.get(0);
     }
 
+    /**
+     * Retrieving saved posts of user
+     * @param email is the email of user
+     * */
     @Override
     public List<UserPost> getSavedPostsOfUser(String email) {
         User user = userRepository.findByEmail(email);
         return convert(user.getSaved());
     }
 
+    /**
+     * Retrieving liked posts of user
+     * @param email is the email of user
+     * */
     @Override
     public List<UserPost> getLikedPostsOfUser(String email) {
         User user = userRepository.findByEmail(email);
         return convert(user.getLikes());
     }
 
+    /**
+     * Removing of a post by ID
+     * @param postId is the ID of post
+     * */
     @Override
     public boolean deletePost(Long postId) {
         var user = userService.getLoggedInUser();
         return deletePost(postId, user);
     }
 
+    /**
+     * Removing of a post by ID
+     * @param postId is the ID of post
+     * @param email is the email of user
+     * */
     @Override
     public boolean deletePost(Long postId, String email) {
         var user = userRepository.findByEmail(email);
         return deletePost(postId, user);
     }
 
+    /**
+     * Implementing delete functions using sql-query
+     * */
     @Transactional
     @javax.transaction.Transactional
-    private boolean deletePost(Long postId, User user)
-    {
+    private boolean deletePost(Long postId, User user) {
         var manager = entityManagerFactory.createEntityManager();
         var transaction = manager.getTransaction();
         try {
@@ -157,23 +201,23 @@ public class PostServiceImpl implements PostService {
         return true;
     }
 
+    /**
+     * Editing of a post by ID
+     * @param postId is the ID of a post
+     * @param newContent is text of a post
+     * @param file is an image user attaches
+     * */
     @Override
     public Post editPost(long postId, String newContent, MultipartFile file) {
-        var post = postRepository.findById(postId).orElse(null);
-        if (post == null)
-        {
+        var post = postRepository.findById(postId).orElse(null);if (post == null) {
             return null;
         }
-
         post.setContent(newContent);
-        if (file.getOriginalFilename() != null && !file.getOriginalFilename().isEmpty() && !post.getImage().equals(file.getOriginalFilename()))
-        {
-            try
-            {
+        if (file.getOriginalFilename() != null && !file.getOriginalFilename().isEmpty() && !post.getImage().equals(file.getOriginalFilename())) {
+            try {
                 FileUploadUtil.saveFile(String.format("user-photos/posts/%d/", post.getId()), file.getOriginalFilename(),file);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 return null;
             }
             post.setImage(file.getOriginalFilename());
@@ -181,6 +225,11 @@ public class PostServiceImpl implements PostService {
         return postRepository.save(post);
     }
 
+    /**
+     * Retweeting of a post
+     * @param postId is the ID of a post
+     * @param user is a current logged in user
+     * */
     @Override
     public UserPost retweetPost(User user, Long postId) {
         Post originalPost = postRepository.getById(postId);
@@ -193,13 +242,10 @@ public class PostServiceImpl implements PostService {
                     .content(originalPost.getContent())
                     .image(originalPost.getImage()).build();
             newPost = postRepository.save(newPost);
-            if (newPost.getImage() != null && !newPost.getImage().isEmpty())
-            {
+            if (newPost.getImage() != null && !newPost.getImage().isEmpty()) {
                 try {
                     FileUploadUtil.copyFile(originalPost.getImagePath(), newPost.getImagePath());
-                }
-                catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     postRepository.deleteById(newPost.getId());
                     return null;
                 }
@@ -213,42 +259,29 @@ public class PostServiceImpl implements PostService {
         return null;
     }
 
-    private void deletePost(List<Post> posts, Long postId){
-        Iterator<Post> i = posts.iterator();
-        while (i.hasNext()) {
-            Post post = i.next();
-            if (post.getId().equals(postId)) {
-                i.remove();
-                break;
-            }
-        }
-    }
-
     private List<UserPost> convert(List<Post> posts){
         User currentUser = userService.getLoggedInUser();
         return convert(posts, currentUser);
     }
 
-    private List<UserPost> convert(List<Post> posts, User currentUser){
+    /**
+     * Converting object from dto to a db-model
+     * */
+    private List<UserPost> convert(List<Post> posts, User currentUser) {
         List<User> users = userRepository.findAll();
         var postsList = new ArrayList<UserPost>();
-        for (var user : users)
-        {
-            for (var post : user.getPosts())
-            {
-                if (posts != null && posts.stream().noneMatch(p -> p.getId().equals(post.getId())))
-                {
+        for (var user : users) {
+            for (var post : user.getPosts()) {
+                if (posts != null && posts.stream().noneMatch(p -> p.getId().equals(post.getId()))) {
                     continue;
                 }
                 var savesCount = users.stream().filter(u -> u.getSaved().stream().anyMatch(s -> s.getId().equals(post.getId()))).count();
                 var userPost = new UserPost(user, post);
 
                 var comments = new ArrayList<UserComment>();
-                for (var comment : post.getComments())
-                {
+                for (var comment : post.getComments()) {
                     var commentAuthor = users.stream().filter(u -> u.getEmail().equals(comment.getUserEmail())).findFirst().orElse(null);
-                    if (commentAuthor != null)
-                    {
+                    if (commentAuthor != null) {
                         comments.add(new UserComment(comment, commentAuthor));
                     }
                 }
